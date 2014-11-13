@@ -1,4 +1,4 @@
-<img src="http://www.freeimageslive.com/galleries/workplace/office2/preview/coloring_pencils.jpg" alt="pencil icon" width="50%", height="50%" align="right" />
+<img src="http://www.freeimageslive.com/galleries/workplace/office2/preview/coloring_pencils.jpg" alt="pencil icon" width="40%", height="40%" align="right" />
 tttt - tims tkinter text tags
 ===========
 
