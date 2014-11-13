@@ -39,6 +39,13 @@ xml_data = tag_manager.save_with_xml()
 data = tag_manager.load_xml(xml_data)
 ```
 
+***Configuring Buttons For Indenting***
+```
+tag_manager.button_references = {'bold':bold,
+										'italic':italic,
+										'underline':underline}
+```
+
 ##Development / Contributing##
 * Check the Github Issue Tracker
 * Setting up mail list and dev communications
