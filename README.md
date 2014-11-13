@@ -15,6 +15,7 @@ Developed with Python3
 
 ##Installation##
 The plugin is not yet released as a pip. (needs to be a little bit more stable)
+There is a [Demo](https://github.com/timeyyy/tttt/wiki/Demo-Code) avaliable
 
 ##Usage##
 
