@@ -1,3 +1,4 @@
+<img src="http://www.freeimageslive.com/galleries/workplace/office2/preview/coloring_pencils.jpg" alt="pencil icon" width="50%", height="50%" align="right" />
 tttt - tims tkinter text tags
 ===========
 
@@ -5,7 +6,7 @@ Save and load tags for the tkinter text widget using open office format xml
 
 Developed with Python3
 
-<img src="http://www.freeimageslive.com/galleries/workplace/office2/preview/coloring_pencils.jpg" alt="pencil icon" width="50%", height="50%" align="right" />
+
 
 
 ##Features##
