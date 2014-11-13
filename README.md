@@ -23,7 +23,7 @@ from tttt import XmlManager
 
 tag_manager = XmlManager(text)
 ```
-Then bind these to your callback buttons or hotkeys
+***bind these to your callback buttons or hotkeys***
 ```
 tag_manager.change_style('bold') 
 tag_manager.change_style('italic')
@@ -31,12 +31,13 @@ tag_manager.change_style('solid') #underline
 tag_manager.change_style(('family',value)) 
 tag_manager.change_style(('size',value))
 ```
-on save and load
+***Saving and loading***
 ```
 xml_data = tag_manager.save_with_xml()
 data = tag_manager.load_xml(xml_data)
 ```
 
-
-
+##Development / Contributing##
+* Check the Github Issue Tracker
+* Setting up mail list and dev communications
 
