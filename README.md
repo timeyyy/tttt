@@ -8,15 +8,15 @@ Developed with Python3
 <img src="http://www.freeimageslive.com/galleries/workplace/office2/preview/coloring_pencils.jpg" alt="pencil icon" width="50%", height="50%" align="right" />
 
 
-***Features***
+##Features##
 * Automatically indent buttons on selection
 * Bold, Italic, Underline, Overstrike, Fonts, Sizes
 * Behavour of adding and removing tags is modeled on libre office
 
-***Installation***
+##Installation##
 The plugin is not yet released as a pip. (needs to be a little bit more stable)
 
-***Usage***
+##Usage##
 
 ```
 from tttt import XmlManager
