@@ -1,6 +1,6 @@
 <img src="http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg" alt="pencil icon" width="40%", height="40%" align="right" />
 tttt - tims tkinter text tags
-===========
+======
 
 Save and load tags for the tkinter text widget using open office format xml
 
@@ -36,7 +36,7 @@ tag_manager.change_style(('size',value))
 ***Saving and loading***
 ```
 xml_data = tag_manager.save_with_xml()
-data = tag_manager.load_xml(xml_data)
+tag_manager.load_xml(data)
 ```
 
 ***Configuring Buttons For Indenting***
