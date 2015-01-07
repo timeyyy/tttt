@@ -92,8 +92,8 @@ class MixInText:
 	def text_from_tag(self, tag):	
 		'''returns the start index, and text for each instance of
 		a tag'''
-		zipped = zip(self.text.tag_ranges(tag)[0::2], self.text.tag_ranges(tag)[1::2]) #the second pareametr of slice is a step #http://stackoverflow.com/questions/4647050/collect-every-pair-of-elements-from-a-list-into-tuples-in-python
-		for start, end in zipped:	#for each section that has the tag,
+		tag_sections = zip(self.text.tag_ranges(tag)[0::2], self.text.tag_ranges(tag)[1::2]) #the second pareametr of slice is a step #http://stackoverflow.com/questions/4647050/collect-every-pair-of-elements-from-a-list-into-tuples-in-python
+		for start, end in tag_sections:	#for each section that has the tag,
 			#~ print('start and end TEXT_from_Tag : %s,  %s '% (start,end))
 			yield start, self.text.get(start,end)
 
@@ -360,7 +360,7 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 					
 					values = [weight,font_style,underline_style,font_size,font_name,bg,fg,over]	#add all items and remove the null values
 					filtered = []	
-					for item in values:	#filter the none values out of the tupled and normal items
+					for item in values:	#filter the none values out of the tupled and normal items #TBD CAN YOU MAKE THIS NICER??
 						try:
 							if item[1] is not None:			#some values are passed in as a tuple and have to be handled differently
 								filtered.append(item)
@@ -452,10 +452,13 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 					#~ print(repr(text),'data')
 			print('sorting it by positions and creating xml tags')
 			#~ sorted_keys = sorted(holder.keys())
+			
 			pprint(sorted(holder.items()))
-			print()
-			pprint(sorted(holder.keys()))
-			for i, pos in enumerate(sorted(holder.keys())):	#sorting text by positions and creating xml tags
+			#seq = ['1.0', '1.1', '1.4', '1.10']
+			#seq.sort(key = lambda s: [int(x) for x in s.split(".")])
+			
+			pprint(sorted(holder.keys(), key=lambda s: [int(x) for x in s.split(".")]))
+			for i, pos in enumerate(sorted(holder.keys(), key=lambda s: [int(x) for x in s.split(".")])):	#sorting text by positions and creating xml tags
 				row, col = pos.split('.')
 				row, col = int(row), int(col)
 				tag_name, text = holder[pos]				#text to be inserted
@@ -564,7 +567,7 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 
 		def change_style_non_select(self,requested_change): # What to do when no text is selected
 			cursor = self.text.index('insert')
-			w, w_start, w_end, w_len = self.word_at_index(cursor)	# TBD if cursor is one space after a word the word is still returned.. fix
+			w, w_start, w_end, w_len = self.word_at_index(cursor)
 			print(w,'WORD')
 			
 			#~ current_char = self.text.get(cursor)

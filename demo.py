@@ -22,6 +22,9 @@ Key binds are also enabled
 
 pretty printed xml is saved in xml_on_load.txt and xml_on_save.txt
 (for debugging purposes)
+
+Command line option to load a document is also supported
+python demo open_me.txt
 '''
 
 class MakerOptionMenu(tk.Frame):	#Used for creating Option Menus
@@ -178,19 +181,20 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			f.close()
 		self.modified = False
 		
+	def reload(self):		# For testing
+		self.load(self.filename)
+		
 root = tk.Tk()
 root.config(background="black")
 
 editor = RoomEditor(root)			
 editor.pack(fill=tk.Y, expand=1, pady=10)
+editor.focus_set()	#TBD TAKE FOCUS FROM UNCRUMPLED
 
-editor.focus_set()
-
-try:
+try:										# Load Command line args
 	editor.load(sys.argv[1])
 except (IndexError, IOError):
 	pass
-
 
 ###
 #	Style for ttk button styles for button state toggling
@@ -205,7 +209,7 @@ editor.bind('<Control-Key-i>', lambda e:editor.tag_manager.change_style('italic'
 editor.bind('<Control-Key-u>', lambda e:editor.tag_manager.change_style('solid'))
 editor.bind('<Control_L><o>', lambda e: editor.load())								# This bind syntax is different, the user has to release the keys before calling it again
 editor.bind('<Control_L><s>', lambda e: editor.save())
-editor.bind('<Control-Key-p>', lambda e: print('booooo test'))
+editor.bind('<Control-Key-r>', lambda e: editor.reload())
 
 
 ###
@@ -213,6 +217,7 @@ editor.bind('<Control-Key-p>', lambda e: print('booooo test'))
 ###
 tk.Button(root, text='load', command = lambda: editor.load()).pack(side ='right')
 tk.Button(root, text='save', command = lambda: editor.save()).pack(side ='right')
+tk.Button(root, text='reload', command = lambda: editor.reload()).pack(side ='right')
 bold = ttk.Button(root, text='Bold', command = lambda: editor.tag_manager.change_style('bold'), style='ToggleButton')	#tttt
 bold.pack(side='left')
 italic = ttk.Button(root, text='Italic', command = lambda: editor.tag_manager.change_style('italic'), style='ToggleButton')	#tttt
@@ -225,7 +230,7 @@ overstrike.pack(side='left')
 ###
 #	FONT SIZE AND FAMILY DROP DOWN LISTS
 ###
-class family_menu(MakerOptionMenu):	#Subclassing my gui builder and configuring
+class family_menu(MakerOptionMenu):	# Subclassing my gui builder and configuring
 		def start(self):
 			self.initialValue = 'Font'
 			self.options = ['Arial','Times New Roman','Trebuchet Ms','Comis Sans Ms','Verdana','Georgia']

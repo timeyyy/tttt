@@ -4,49 +4,43 @@
 		<style name="default">
 			<text-properties/>
 		</style>
-		<style name="p8">
-			<text-properties font-style="italic"/>
-		</style>
-		<style name="p10">
-			<text-properties font-style="italic" weight="bold"/>
-		</style>
-		<style name="p3">
-			<text-properties text-underline-style="solid"/>
-		</style>
 		<style name="p1">
-			<text-properties font-name="Times New Roman"/>
-		</style>
-		<style name="p4">
-			<text-properties text-underline-style="solid"/>
-		</style>
-		<style name="p6">
 			<text-properties weight="bold"/>
 		</style>
-		<style name="p9">
-			<text-properties font-style="italic" text-underline-style="solid"/>
+		<style name="p3">
+			<text-properties text-underline-style="solid" weight="bold"/>
 		</style>
 		<style name="p2">
-			<text-properties font-name="Times New Roman" weight="bold"/>
+			<text-properties font-style="italic" weight="bold"/>
 		</style>
-		<style name="p7">
-			<text-properties/>
+		<style name="p4">
+			<text-properties font-style="italic" text-underline-style="solid" weight="bold"/>
 		</style>
 		<style name="p5">
-			<text-properties text-underline-style="solid" weight="bold"/>
+			<text-properties font-style="italic"/>
 		</style>
 	</automatic-styles>
 	<body>
-		<p style-name="p6">we now have a bunch </p>
-		<p style-name="p7">of normal text</p>
-		<p style-name="p6"> of bold text here
-</p>
-		<p style-name="p3">boldandunderline </p>
-		<p style-name="p5">da</p>
-		<p style-name="p6">littledifferent what is the problem</p>
-		<p style-name="p7"> is </p>
-		<p style-name="default">t this</p>
-		<p style-name="p3">
+		<p style-name="default">
 
-hi tim check end of hhworddddddd now</p>
+
+lets now</p>
+		<p style-name="p1">dosometestfdjksa</p>
+		<p style-name="p2">dskaldw</p>
+		<p style-name="p1">
+dsadsa </p>
+		<p style-name="p3">dsadsa</p>
+		<p style-name="p1">
+
+</p>
+		<p style-name="p3">dsada</p>
+		<p style-name="p4">dsada</p>
+		<p style-name="p3">dsada</p>
+		<p style-name="p1">dsada 
+
+
+hi</p>
+		<p style-name="p2">wtfcunt</p>
+		<p style-name="p4">fddklsfs</p>
 	</body>
 </document-content>
