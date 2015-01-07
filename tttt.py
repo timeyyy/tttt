@@ -195,41 +195,41 @@ class MixInText:
 			#~ print('fin defualt tag')
 			print()
 		text = event.widget		
-		print('dtag')																																						
-		if event.char is not '' and len(repr(event.char)) >= 3:	#no blank chars from special charachters, the and statement with > blocks keys such as ctrl + (something)
-			print('IN')
-			pprint(event.__dict__)
+		#~ print('dtag')																																						
+		if event.char != '' and len(repr(event.char)) >= 3 and event.keysym != 'BackSpace':	# no blank chars from special charachters, no hotkey such as ctrl + (something)
+			#~ print('IN')
+			#~ pprint(event.__dict__)
 			cursor = text.index('insert')
 			char_before = text.index(cursor + '-1c')	    						
-			current_tags = text.tag_names(char_before)			#current tags on the char before the cursor    						
+			current_tags = text.tag_names(char_before)			# current tags on the char before the cursor    						
 			try:
 				current_tag = current_tags[-1]			
-			except IndexError:							#if there is no tag already then add the default should run for pos 1.0 only
+			except IndexError:							# if there is no tag already then add the default should run for pos 1.0 only
 				current_tag = 'default'
 			row, col = cursor.split('.')
-			if self.overide_state:						#a value is being saved here to overide the defualt behavior, so a button was pressed etc
+			if self.overide_state:						# a value is being saved here to overide the defualt behavior, so a button was pressed etc
 				current_tag = self.overide_state
-			elif col == '0' and row != '1':				#if at start of row, and text exists to the right of the cursor take that style
+			elif col == '0' and row != '1':				# if at start of row, and text exists to the right of the cursor take that style
 				def let_text_get():
-					if text.get(cursor+'+1c') != '\n':	#data exists after the cursour, so take that setting
+					if text.get(cursor+'+1c') != '\n':	# data exists after the cursour, so take that setting
 						current_tags = text.tag_names(cursor+'+1c')
-					else:								#get style from last line, which is default behavior
+					else:								# get style from last line, which is default behavior
 						current_tags = text.tag_names(cursor+'-1c')
 					current_tag = current_tags[-1]
 					text.tag_add(current_tag, cursor)
-					if current_tags[0] != current_tag:	#remove old tag
+					if current_tags[0] != current_tag:	# remove old tag
 						text.tag_remove(current_tags[0],cursor)
 				text.after(1,let_text_get)
 				return
 			#~ print(current_tag,' < - Tag to Be added')
 				
-			text.after(1,functools.partial(let_update_add_tag,cursor))
+			text.after(1, functools.partial(let_update_add_tag,cursor))
 			if event.char != ' ':		# Do no reset on space
 				self.overide_state = 0	# back to default behavior	
 
-		else:											# A non character was pressed
-			pprint(event.__dict__)
-			self.check_button_state(event)
+		elif event.keysym in ('Left','Down','Right','Up','BackSpace'):	# Button indent checking on arrow key pressed
+			text.after(1, functools.partial(self.check_button_state, event))
+			
 	def check_button_state(self, event): # On mouse over only
 		# Unchecks all buttons
 		# Checks if text before cursour has settings
