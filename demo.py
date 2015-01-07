@@ -200,12 +200,12 @@ button_styling.install(root, imgdir='img')
 ###
 #	SETTING UP KEYBINDS
 ###
-editor.bind('<Control_L><b>', lambda e:editor.tag_manager.change_style('bold'))
-editor.bind('<Control_L><i>', lambda e:editor.tag_manager.change_style('italic'))
-editor.bind('<Control_L><u>', lambda e:editor.tag_manager.change_style('solid'))
-editor.bind('<Control_L><o>', lambda e: editor.load())
+editor.bind('<Control-Key-b>', lambda e:editor.tag_manager.change_style('bold'))
+editor.bind('<Control-Key-i>', lambda e:editor.tag_manager.change_style('italic'))
+editor.bind('<Control-Key-u>', lambda e:editor.tag_manager.change_style('solid'))
+editor.bind('<Control_L><o>', lambda e: editor.load())								# This bind syntax is different, the user has to release the keys before calling it again
 editor.bind('<Control_L><s>', lambda e: editor.save())
-editor.bind('<Control_L><p>', lambda e: print('booooo test'))
+editor.bind('<Control-Key-p>', lambda e: print('booooo test'))
 
 
 ###

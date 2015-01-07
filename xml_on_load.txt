@@ -1,29 +1,42 @@
 <?xml version="1.0" ?>
 <document-content>
 	<automatic-styles>
+		<style name="p10">
+			<text-properties font-name="Times New Roman" text-underline-style="solid" weight="bold"/>
+		</style>
 		<style name="p3">
 			<text-properties text-underline-style="solid"/>
+		</style>
+		<style name="p9">
+			<text-properties font-style="italic" text-underline-style="solid"/>
+		</style>
+		<style name="p8">
+			<text-properties font-style="italic"/>
+		</style>
+		<style name="p2">
+			<text-properties font-name="Times New Roman" weight="bold"/>
+		</style>
+		<style name="p6">
+			<text-properties weight="bold"/>
+		</style>
+		<style name="p7">
+			<text-properties/>
+		</style>
+		<style name="default">
+			<text-properties/>
+		</style>
+		<style name="p5">
+			<text-properties text-underline-style="solid" weight="bold"/>
 		</style>
 		<style name="p1">
 			<text-properties font-name="Times New Roman"/>
 		</style>
 		<style name="p4">
-			<text-properties text-line-through-type="single" text-underline-style="solid"/>
-		</style>
-		<style name="default">
-			<text-properties/>
-		</style>
-		<style name="p2">
-			<text-properties font-name="Times New Roman" weight="bold"/>
+			<text-properties text-underline-style="solid"/>
 		</style>
 	</automatic-styles>
 	<body>
-		<p style-name="p1">aaaadsadwadsadwda</p>
-		<p style-name="p2">dwadwadwa</p>
-		<p style-name="default">dw</p>
-		<p style-name="p3">d</p>
-		<p style-name="default">wadwadwad</p>
-		<p style-name="p3">ddddwaawda</p>
-		<p style-name="p4">ddddd</p>
+		<p style-name="default">
+</p>
 	</body>
 </document-content>

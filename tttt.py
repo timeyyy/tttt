@@ -167,7 +167,6 @@ class MixInText:
 			print(2)
 			but.config(default='normal')
 	
-	
 	def default_tag(self, event):	#controlls binding tags on insert,
 		"""
 		text.bind('<Key>',lambda e: default_tag(e))
@@ -305,6 +304,8 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 		
 		"""
 		
+		#~ keep_tkinter_class_binding = False		# if i want to make the defaults avaliable one day for some reason
+		
 		option_list = {'bold':{'weight':'bold'},
 						'solid':{'underline':1},
 						'italic':{'slant':'italic'},
@@ -313,12 +314,16 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 		
 		def __init__(self, text):
 			self.text = text										#The text widget	
-			self.text.bind('<Key>',lambda e: self.default_tag(e))	#applies a default tag on insert, so we know which elements have no tags, this will be removed on adding another tag
-			self.text.bind('<Button-1>',lambda e: self.text.after(1,
-			functools.partial(self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
+			#~ self.text.bind('<Key>',lambda e: self.default_tag(e))	#applies a default tag on insert, so we know which elements have no tags, this will be removed on adding another tag
+			self.text.bind('<Button-1>',lambda e: self.text.after(1, functools.partial(self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
 			self.overide_state = 0		#if the state is active it will overide the default behabvior of style grabbing	
 			#~ self.load_style_tags()		#Load defaults and anyother tags present. TBD, load file controller seems to be propogating the load ? i would like to check that and see if it is a good idea or not to load when the page is first created
 			self.custom_default_style = 0   # TBD implement, see help above
+			
+			#~ if not self.keep_tkinter_class_binding:
+				#~ print(text.bind())
+				#~ text.unbind_class('Text', "<Control-Key-i>")
+				
 		def load_xml(self,data):	#data here is a str of xml
 			'''
 			pass in xml data that has been previously saved 
@@ -327,11 +332,11 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			#~ print('starting load')
 			#~ print(data)
 			
-			#~ if data.strip():										#Peparing to pretty print for debug
-				#~ xmlt = xml.dom.minidom.parseString(data)		
-				#~ pretty_xml_as_string = xmlt.toprettyxml()
-				#~ with open('xml_on_load.txt','w') as f:			#This file is written for debug purposes
-					#~ f.write(pretty_xml_as_string)
+			if data.strip():										#Peparing to pretty print for debug
+				xmlt = xml.dom.minidom.parseString(data)		
+				pretty_xml_as_string = xmlt.toprettyxml()
+				with open('xml_on_load.txt','w') as f:			#This file is written for debug purposes
+					f.write(pretty_xml_as_string)
 				
 			with ignored(ET.ParseError):					#if parse error i.e no xml tags, just pass
 				tree = ET.fromstring(data)					#create xml tree from str	
@@ -415,10 +420,10 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			self.convert_text_to_xml(data)		#data is saved in the tree
 			xml_data = self.save_style_info()	#saves tags into automatic-styles xml tag and returns data
 			
-			#~ xmlt = xml.dom.minidom.parseString(xml_data)	#This code block is for debugging purposes
-			#~ pretty_xml_as_string = xmlt.toprettyxml()
-			#~ with open('xml_on_save.txt','w') as f:
-				#~ f.write(pretty_xml_as_string)
+			xmlt = xml.dom.minidom.parseString(xml_data)	#This code block is for debugging purposes
+			pretty_xml_as_string = xmlt.toprettyxml()
+			with open('xml_on_save.txt','w') as f:
+				f.write(pretty_xml_as_string)
 				
 			return xml_data						#user will decide how to save the str
 		
@@ -485,7 +490,8 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			mw = InMemoryWriter()	#acts as a file but saves in memory
 			self.tree.write(mw)		#our xml tree is written to our memory file
 			return mw.data[0].decode('utf-8')	#mw.data contains the written data
-
+		
+		@tkinter_breaker 			# Stops tkinter default binds propogating e.g ctrl + i		
 		def change_style(self,requested_change):
 			'''
 			Pass in desired style change
@@ -499,7 +505,7 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			
 			#~ if requested_change == 'underline': requested_change = 'solid' #much better to call underline not solid, mapping for convienecne
 			#button ref requires it to be solid though ö
-			
+			print('IN CHANGE STYLE FUCK')
 			try:														
 				cursor = self.text.index('insert')
 				self.change_style_selected(requested_change)	# Handle selected text
@@ -513,22 +519,22 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 				else:											# If no selected text
 					self.change_style_non_select(requested_change)
 					self.text.focus_force()						# Refocuses after clickng on button	
-		@tkinter_breaker									# Stops tkinter default binds propogating e.g ctrl + i					
+														
 		def change_style_selected(self,requested_change): 		# What to do on selected text
 			current_tags = self.text.tag_names('sel.first')		# All tags on the first charcher	     
 			current_tag = current_tags[-1]						# Last added tag	
-			#~ pprint([current_tag,requested_change,self.styles],'cur tag req change and styles list')
+			print([current_tag,'  ',requested_change,],'cur tag req change')
 			#~ print(current_tags)
 			with ignored(KeyError,AttributeError):					# If a references for a button is not set and the variable isnt configure
-				button = self.button_references[requested_change]	# Reference for depressing or pressing button in
+				button = self.button_references[self.parse_but_ref(requested_change)]	# Reference for depressing or pressing button in
 			if current_tag == 'sel' or requested_change not in self.styles[current_tag]: #ADD request
 				#~ print('add request@ %s , %s' % (self.text.index('sel.first'),self.text.index('sel.last')))
-				#~ self.button_state_change(button,1)		#press button
+				self.button_state_change(button,1)		#press button
 				style = self.check_styles(requested_change,current_tag,remove=False)
 				self.text.tag_remove(current_tags[1],'sel.first','sel.last')	#removing old tag
 			else:																		#REMOVE request
 				#~ print('remove request @ %s , %s' % (self.text.index('sel.first'),self.text.index('sel.last')))
-				#~ self.button_state_change(button,0)		#depress button
+				self.button_state_change(button,0)		#depress button
 				style = self.check_styles(requested_change,current_tag,remove=True)			
 				#~ self.text.tag_add('default','sel.first','sel.last')				#adding default tag
 			
@@ -721,4 +727,6 @@ def line_count(text):	#http://stackoverflow.com/questions/4609382/getting-the-to
 	return int(text.index('end-1c').split('.')[0])
 			
 if __name__ == '__main__': 
+	#~ print(help(tk.Text.bind))
+	#~ print(help(tk.Text.unbind))
 	import demo
