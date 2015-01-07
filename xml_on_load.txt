@@ -1,46 +1,70 @@
 <?xml version="1.0" ?>
 <document-content>
 	<automatic-styles>
-		<style name="default">
-			<text-properties/>
-		</style>
 		<style name="p1">
 			<text-properties weight="bold"/>
-		</style>
-		<style name="p3">
-			<text-properties text-underline-style="solid" weight="bold"/>
-		</style>
-		<style name="p2">
-			<text-properties font-style="italic" weight="bold"/>
 		</style>
 		<style name="p4">
 			<text-properties font-style="italic" text-underline-style="solid" weight="bold"/>
 		</style>
+		<style name="p10">
+			<text-properties text-underline-style="solid"/>
+		</style>
+		<style name="p8">
+			<text-properties color="#00ffff" weight="bold"/>
+		</style>
 		<style name="p5">
 			<text-properties font-style="italic"/>
+		</style>
+		<style name="default">
+			<text-properties/>
+		</style>
+		<style name="p7">
+			<text-properties color="#ff0080" weight="bold"/>
+		</style>
+		<style name="p9">
+			<text-properties background-color="#8080c0" weight="bold"/>
+		</style>
+		<style name="p3">
+			<text-properties text-underline-style="solid" weight="bold"/>
+		</style>
+		<style name="p6">
+			<text-properties color="#0080c0" weight="bold"/>
+		</style>
+		<style name="p2">
+			<text-properties font-style="italic" weight="bold"/>
 		</style>
 	</automatic-styles>
 	<body>
 		<p style-name="default">
 
 
-lets now</p>
-		<p style-name="p1">dosometestfdjksa</p>
-		<p style-name="p2">dskaldw</p>
+lets </p>
+		<p style-name="p10">nowdosometestfdjksadskdskaldw</p>
+		<p style-name="p1">d</p>
+		<p style-name="p6">m</p>
+		<p style-name="p1">d</p>
+		<p style-name="p9">a</p>
+		<p style-name="p2">d</p>
 		<p style-name="p1">
-dsadsa </p>
+</p>
+		<p style-name="p8">dsads</p>
+		<p style-name="p1">a </p>
 		<p style-name="p3">dsadsa</p>
 		<p style-name="p1">
 
 </p>
-		<p style-name="p3">dsada</p>
+		<p style-name="p3">dsa</p>
+		<p style-name="p10">dadsa</p>
 		<p style-name="p4">dsada</p>
-		<p style-name="p3">dsada</p>
+		<p style-name="p3">dsa</p>
+		<p style-name="p10">dads</p>
 		<p style-name="p1">dsada 
 
 
 hi</p>
 		<p style-name="p2">wtfcunt</p>
-		<p style-name="p4">fddklsfs</p>
+		<p style-name="p4">fdddddklsfs
+</p>
 	</body>
 </document-content>

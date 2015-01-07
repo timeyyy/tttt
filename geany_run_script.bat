@@ -1,4 +1,4 @@
-python "tttt.py"
+python "demo.py"
 
 pause
 del "%0"

@@ -2,6 +2,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.filedialog import asksaveasfilename, askopenfilename
+from tkinter.colorchooser import askcolor
 import os
 import sys
 
@@ -226,9 +227,12 @@ underline = ttk.Button(root, text='Underline', command = lambda: editor.tag_mana
 underline.pack(side='left')
 overstrike = ttk.Button(root, text='Overstrike', command = lambda: editor.tag_manager.change_style('overstrike'), style='ToggleButton')	#tttt
 overstrike.pack(side='left')
-
+colour = ttk.Button(root, text='Text Colour', command=lambda: change_colour('foreground'),style='ToggleButton') #tttt 
+colour.pack(side='left')
+highlighting = ttk.Button(root, text='Highlight Colour', command=lambda: change_colour('background'),style='ToggleButton') #tttt 
+highlighting.pack(side='left')	
 ###
-#	FONT SIZE AND FAMILY DROP DOWN LISTS
+#	FONT SIZE AND FAMILY DROP DOWN LISTS, AlSO COLOUR CHOOSER
 ###
 class family_menu(MakerOptionMenu):	# Subclassing my gui builder and configuring
 		def start(self):
@@ -247,6 +251,10 @@ class size_menu(MakerOptionMenu):	#Subclassing my gui builder and configuring
 		def run_command(self,value):
 			editor.tag_manager.change_style(('size',value))	#tttt	
 
+def change_colour(colour_type):
+	colour = askcolor()[1]
+	editor.tag_manager.change_style((colour_type, colour))
+
 family_menu(root)							#initalize the menus
 size_menu(root)	
 
@@ -256,7 +264,7 @@ size_menu(root)
 editor.tag_manager.button_references = {'bold':bold,
 										'italic':italic,
 										'underline':underline} 
-										
+										#~ 'foreground':pass
 def start():
 	root.mainloop()
 if __name__ == '__main__':

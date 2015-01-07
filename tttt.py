@@ -388,7 +388,6 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 				#~ print(self.text.tag_ranges('default'),'def')
 				#~ print(self.text.tag_ranges('p1'),'p1')
 			#~ print('FINISHED LOADING')
-			print('FINISHED LOADING')
 		
 		def load_style_tags(self):		# loading the styles into text tags 
 			#~ print('loading the styles into text tags')
@@ -405,9 +404,9 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 						if item[0] == 'family':
 							new_font.configure(family = item[1])
 						if item[0] == 'background':
-							new_font.configure(background = item[1])
+							self.text.tag_configure(name, background = item[1])
 						if item[0] == 'foreground':
-							new_font.configure(foreground = item[1])
+							self.text.tag_configure(name, foreground = item[1])
 				self.text.tag_configure(name, font=new_font)	#add tag to font
 				#~ print('TAG NAMES LOADED')
 				#~ print(self.text.tag_names())
@@ -450,14 +449,14 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 				for start_index, text in self.text_from_tag(tag):
 					holder[str(start_index)] = [tag, text]			# ADD TEXT TO DICT WITH KEY AS POS
 					#~ print(repr(text),'data')
-			print('sorting it by positions and creating xml tags')
+			#~ print('sorting it by positions and creating xml tags')
 			#~ sorted_keys = sorted(holder.keys())
 			
-			pprint(sorted(holder.items()))
+			#~ pprint(sorted(holder.items()))
 			#seq = ['1.0', '1.1', '1.4', '1.10']
 			#seq.sort(key = lambda s: [int(x) for x in s.split(".")])
-			
-			pprint(sorted(holder.keys(), key=lambda s: [int(x) for x in s.split(".")]))
+
+			#~ pprint(sorted(holder.keys(), key=lambda s: [int(x) for x in s.split(".")]))
 			for i, pos in enumerate(sorted(holder.keys(), key=lambda s: [int(x) for x in s.split(".")])):	#sorting text by positions and creating xml tags
 				row, col = pos.split('.')
 				row, col = int(row), int(col)
@@ -534,21 +533,26 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			current_tags = self.text.tag_names('sel.first')		# All tags on the first charcher	     
 			with ignored(IndexError):							# Empty if no tags
 				current_tag = current_tags[-1]						# Last added tag	
-			print([current_tag,'  ',requested_change,],'cur tag req change')
+			#~ print([current_tag,'  ',requested_change,],'cur tag req change')
 			#~ print(current_tags)
-			with ignored(KeyError,AttributeError):					# If a references for a button is not set and the variable isnt configure
-				button = self.button_references[self.parse_but_ref(requested_change)]	# Reference for depressing or pressing button in
 			if current_tag == 'sel' or requested_change not in self.styles[current_tag]: #ADD request
 				#~ print('add request@ %s , %s' % (self.text.index('sel.first'),self.text.index('sel.last')))
-				self.button_state_change(button,1)		#press button
-				style = self.check_styles(requested_change,current_tag,remove=False)
+				button_pressed = True					#press button
+				REMOVE = False	
 				self.text.tag_remove(current_tags[1],'sel.first','sel.last')	#removing old tag
 			else:																		#REMOVE request
 				#~ print('remove request @ %s , %s' % (self.text.index('sel.first'),self.text.index('sel.last')))
-				self.button_state_change(button,0)		#depress button
-				style = self.check_styles(requested_change,current_tag,remove=True)			
-				#~ self.text.tag_add('default','sel.first','sel.last')				#adding default tag
+				button_pressed = False					#depress button		
+				REMOVE= True			
+				#~ self.text.tag_add('default','sel.first','sel.last')				#adding default tag			
+			style = self.check_styles(requested_change,current_tag,remove=REMOVE)
 			
+			try:					# If a references for a button is not set and the variable isnt configure
+				button = self.button_references[self.parse_but_ref(requested_change)]	# Reference for depressing or pressing button in
+				self.button_state_change(button, button_pressed)
+			except KeyError as err:	# The user of the api now knows he has forgotten to add a button reference
+				pass #make a way to disable errors TBD
+				#~ raise err
 			#~ pprint(style,'style after check')											
 			if type(style) is str:								#style is the key of the style (already created)
 				#~ print(style,'using this already created style')
@@ -702,19 +706,19 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 					if item[0] == 'family':
 						new_font.configure(family = item[1])
 					if item[0] == 'background':
-						new_font.configure(background = item[1])
+						self.text.tag_configure(new_name, background = item[1])
 					if item[0] == 'foreground':
-						new_font.configure(foreground = item[1])
+						self.text.tag_configure(new_name, foreground = item[1])
 			self.text.tag_configure(new_name, font=new_font)	#add tag to font
 			try:			# throws except when i want to only update to one charachter
 				self.text.tag_add(new_name, first_index, last_index)#tag is added to the widget at selected text positions
 			except tk.TclError:
 				try:
 					self.text.tag_add(new_name, first_index)
-				except tk.TclError:			#no index values passed so don not add tag
+				except tk.TclError:			# no index values passed so don not add tag
 					pass
 			self.styles[new_name] = style										
-			return new_name		#this is only used in like 1 out of 3 calls to this function fyi
+			return new_name		# this is only used in like 1 out of 3 calls to this function fyi
 		def make_name(self,style):	#
 			#~ makes a new name for the tk and xml tag,
 			#~ If an entire line is selected, make a p tag,
