@@ -251,6 +251,9 @@ size_menu(root)
 editor.tag_manager.button_references = {'bold':bold,
 										'italic':italic,
 										'underline':underline} 
-
-print(help(editor.tag_manager.change_style))
-root.mainloop()			
+										
+def start():
+	root.mainloop()
+if __name__ == '__main__':
+	print(help(editor.tag_manager.change_style))
+	start()			

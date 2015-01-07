@@ -1,29 +1,20 @@
 <?xml version="1.0" ?>
 <document-content>
 	<automatic-styles>
-		<style name="p10">
-			<text-properties font-name="Times New Roman" text-underline-style="solid" weight="bold"/>
+		<style name="default">
+			<text-properties/>
 		</style>
 		<style name="p8">
 			<text-properties font-style="italic"/>
 		</style>
+		<style name="p10">
+			<text-properties font-style="italic" weight="bold"/>
+		</style>
 		<style name="p3">
 			<text-properties text-underline-style="solid"/>
 		</style>
-		<style name="p5">
-			<text-properties text-underline-style="solid" weight="bold"/>
-		</style>
-		<style name="p9">
-			<text-properties font-style="italic" text-underline-style="solid"/>
-		</style>
-		<style name="default">
-			<text-properties/>
-		</style>
-		<style name="p2">
-			<text-properties font-name="Times New Roman" weight="bold"/>
-		</style>
-		<style name="p7">
-			<text-properties/>
+		<style name="p1">
+			<text-properties font-name="Times New Roman"/>
 		</style>
 		<style name="p4">
 			<text-properties text-underline-style="solid"/>
@@ -31,12 +22,31 @@
 		<style name="p6">
 			<text-properties weight="bold"/>
 		</style>
-		<style name="p1">
-			<text-properties font-name="Times New Roman"/>
+		<style name="p9">
+			<text-properties font-style="italic" text-underline-style="solid"/>
+		</style>
+		<style name="p2">
+			<text-properties font-name="Times New Roman" weight="bold"/>
+		</style>
+		<style name="p7">
+			<text-properties/>
+		</style>
+		<style name="p5">
+			<text-properties text-underline-style="solid" weight="bold"/>
 		</style>
 	</automatic-styles>
 	<body>
-		<p style-name="default">
+		<p style-name="p6">we now have a bunch </p>
+		<p style-name="p7">of normal text</p>
+		<p style-name="p6"> of bold text here
 </p>
+		<p style-name="p3">boldandunderline </p>
+		<p style-name="p5">da</p>
+		<p style-name="p6">littledifferent what is the problem</p>
+		<p style-name="p7"> is </p>
+		<p style-name="default">t this</p>
+		<p style-name="p3">
+
+hi tim check end of hhworddddddd now</p>
 	</body>
 </document-content>

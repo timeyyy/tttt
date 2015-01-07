@@ -152,19 +152,19 @@ class MixInText:
 	
 		style.theme_use('toggle')
 		'''
-		print('button state toggle called')
+		#~ print('button state toggle called')
 		if state == 'toggle':
 			print('Value of cget : ',but.cget('default'))
 			if str(but.cget('default')) == 'normal': #button state not pressed
-				print('set to active')
+				#~ print('set to active')
 				but.config(default='active')
 			else:
 				but.config(default='normal')
 		elif state:
-			print(1)
+			#~ print(1)
 			but.config(default='active')
 		else:
-			print(2)
+			#~ print(2)
 			but.config(default='normal')
 	
 	def default_tag(self, event):	#controlls binding tags on insert,
@@ -173,8 +173,10 @@ class MixInText:
 		
 		after being called will reset the self.overide_state variable
 		"""
+		#
+		#
+		#
 		
-		#~ check_button_state
 		def let_update_add_tag(index):					#fuck, tried using after method before function call but it wasnt working
 			#~ print('LET ME UPDATE')
 			#~ print(' text: ',text.get(index))
@@ -204,6 +206,7 @@ class MixInText:
 			try:
 				current_tag = current_tags[-1]			
 			except IndexError:							# if there is no tag already then add the default should run for pos 1.0 only
+				#~ print('adding default tag')
 				current_tag = 'default'
 			row, col = cursor.split('.')
 			if self.overide_state:						# a value is being saved here to overide the defualt behavior, so a button was pressed etc
@@ -229,7 +232,7 @@ class MixInText:
 		elif event.keysym in ('Left','Down','Right','Up','BackSpace'):	# Button indent checking on arrow key pressed
 			text.after(1, functools.partial(self.check_button_state, event))
 			
-	def check_button_state(self, event): # On mouse over only
+	def check_button_state(self, event): # On mouse over and arrow keys or backspace this gets called
 		# Unchecks all buttons
 		# Checks if text before cursour has settings
 		# then sets the buttons to those values for lists or 
@@ -239,10 +242,10 @@ class MixInText:
 
 		#~ print('-----------Checking Button States---- on mouse focus')
 		#~ print('Cursor position :',cursor)
-		#~ print('All tags at cursor',self.text.tag_names(cursor))
+		print('All tags at cursor',self.text.tag_names(cursor))
 		with ignored(IndexError):
 			current_tag = self.text.tag_names(cursor)[-1]
-			#~ print('All attributes in last tag',self.styles[current_tag])
+			print('All attributes in last tag',self.styles[current_tag])
 		
 		with ignored(KeyError,AttributeError):			# incase no button defined for that styyle option, and if no button references defined
 			for attrib, button in self.button_references.items(): 	# Turning all button states off
@@ -314,7 +317,7 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 		
 		def __init__(self, text):
 			self.text = text										#The text widget	
-			#~ self.text.bind('<Key>',lambda e: self.default_tag(e))	#applies a default tag on insert, so we know which elements have no tags, this will be removed on adding another tag
+			self.text.bind('<Key>',lambda e: self.default_tag(e))	#applies a default tag on insert, so we know which elements have no tags, this will be removed on adding another tag
 			self.text.bind('<Button-1>',lambda e: self.text.after(1, functools.partial(self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
 			self.overide_state = 0		#if the state is active it will overide the default behabvior of style grabbing	
 			#~ self.load_style_tags()		#Load defaults and anyother tags present. TBD, load file controller seems to be propogating the load ? i would like to check that and see if it is a good idea or not to load when the page is first created
@@ -385,8 +388,9 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 				#~ print(self.text.tag_ranges('default'),'def')
 				#~ print(self.text.tag_ranges('p1'),'p1')
 			#~ print('FINISHED LOADING')
+			print('FINISHED LOADING')
 		
-		def load_style_tags(self):	#loading the styles into text tags 
+		def load_style_tags(self):		# loading the styles into text tags 
 			#~ print('loading the styles into text tags')
 			for name, style in self.styles.items():
 				new_font = tkinter.font.Font(self.text, self.text.cget("font"))	#???
@@ -407,7 +411,7 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 				self.text.tag_configure(name, font=new_font)	#add tag to font
 				#~ print('TAG NAMES LOADED')
 				#~ print(self.text.tag_names())
-		def save_with_xml(self): # a controller type function
+		def save_with_xml(self): 		# saves
 			"""
 			Returns all data from the text widget formatted with xml
 			Store as you please
@@ -419,12 +423,12 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			self.xml_setup()
 			self.convert_text_to_xml(data)		#data is saved in the tree
 			xml_data = self.save_style_info()	#saves tags into automatic-styles xml tag and returns data
-			
+			#~ print('xmldata')
+			#~ print(xml_data)
 			xmlt = xml.dom.minidom.parseString(xml_data)	#This code block is for debugging purposes
 			pretty_xml_as_string = xmlt.toprettyxml()
 			with open('xml_on_save.txt','w') as f:
 				f.write(pretty_xml_as_string)
-				
 			return xml_data						#user will decide how to save the str
 		
 		def xml_setup(self):							#create standard xml template
@@ -440,21 +444,24 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			#~ repeat
 			#~ order and xml
 
-			holder = {}		#TBDTBDTBD Properly name
-			body = self.tree.find('body')					#navigate to body				
-			for tag in self.styles.keys():						#for all ranges of a tag, 
-				for start, text in self.text_from_tag(tag):
-					holder[str(start)] = [tag, text]			# ADD TEXT TO DICT WITH KEY AS POS
+			holder = {}		
+			body = self.tree.find('body')									
+			for tag in self.styles.keys():							# for all ranges of a tag, 
+				for start_index, text in self.text_from_tag(tag):
+					holder[str(start_index)] = [tag, text]			# ADD TEXT TO DICT WITH KEY AS POS
 					#~ print(repr(text),'data')
-			#~ print('sorting it by positions and creating xml tags')
-			#~ print(holder)
+			print('sorting it by positions and creating xml tags')
+			#~ sorted_keys = sorted(holder.keys())
+			pprint(sorted(holder.items()))
+			print()
+			pprint(sorted(holder.keys()))
 			for i, pos in enumerate(sorted(holder.keys())):	#sorting text by positions and creating xml tags
 				row, col = pos.split('.')
 				row, col = int(row), int(col)
 				tag_name, text = holder[pos]				#text to be inserted
 				tag_type = tag_name							#needs to be differentiated from the tag_name
 				
-				if tag_type[0] == 'T':	#change to a span tag TBD 
+				if tag_type[0] == 'T':	# change to a span tag TBD 
 					tag_type = 'span'
 				else:
 					tag_type = 'p'		# p type tag
@@ -522,7 +529,8 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 														
 		def change_style_selected(self,requested_change): 		# What to do on selected text
 			current_tags = self.text.tag_names('sel.first')		# All tags on the first charcher	     
-			current_tag = current_tags[-1]						# Last added tag	
+			with ignored(IndexError):							# Empty if no tags
+				current_tag = current_tags[-1]						# Last added tag	
 			print([current_tag,'  ',requested_change,],'cur tag req change')
 			#~ print(current_tags)
 			with ignored(KeyError,AttributeError):					# If a references for a button is not set and the variable isnt configure
@@ -556,8 +564,8 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 
 		def change_style_non_select(self,requested_change): # What to do when no text is selected
 			cursor = self.text.index('insert')
-			w, w_start, w_end, w_len = self.word_at_index(cursor +'-1c')	# TBD if cursor is one space after a word the word is still returned.. fix
-			#~ print(w,'WORD')
+			w, w_start, w_end, w_len = self.word_at_index(cursor)	# TBD if cursor is one space after a word the word is still returned.. fix
+			print(w,'WORD')
 			
 			#~ current_char = self.text.get(cursor)
 			#~ if current_char in (' ','\n'):				# Handles being at end of a word
@@ -730,3 +738,4 @@ if __name__ == '__main__':
 	#~ print(help(tk.Text.bind))
 	#~ print(help(tk.Text.unbind))
 	import demo
+	demo.start()
