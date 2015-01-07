@@ -2,6 +2,23 @@ from collections import OrderedDict
 import contextlib
 import json
 
+from functools import wraps
+
+def tkinter_breaker(func):
+	"""
+	decorator to stop tkinter propagtion default bindings,
+	tkinter clinds a ladder of bindings, see http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
+	problem is if the user holds ctrl and presses i it will propgate up
+	so i added kills for the higher levels, 
+	"""
+	#tbd, finish climb to higher levels,mmm probably just kill normally without decorator
+	@wraps(func)
+	def oncall(*args):
+		func(*args)
+		return "break"
+	return oncall
+
+
 class InMemoryWriter():
 	"""
 	Used to defer saving and opening files to later controllers

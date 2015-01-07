@@ -1,9 +1,12 @@
-from tttt import XmlManager
+
 import tkinter as tk
 import tkinter.ttk as ttk
-import os, sys
-from tkinter.filedialog import asksaveasfilename
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import asksaveasfilename, askopenfilename
+import os
+import sys
+
+from tttt import XmlManager
+import button_styling
 #~ sys.path.append(os.path.join(os.getcwd(),'tttt'))
 
 '''
@@ -12,11 +15,13 @@ Demo Code for - Tims Tkinter Text Tags - https://github.com/timeyyy/tttt
 search for '#tttt' to find places where the binding are used throught
 the demo
 
-On Open Automatically opens the file  'demo_xml_data' 
+On program run Automatically opens the file  'demo_xml_data' 
+Saving will overide this file
 
 Key binds are also enabled
 
 pretty printed xml is saved in xml_on_load.txt and xml_on_save.txt
+(for debugging purposes)
 '''
 
 class MakerOptionMenu(tk.Frame):	#Used for creating Option Menus
@@ -86,21 +91,23 @@ class MakerOptionMenu(tk.Frame):	#Used for creating Option Menus
 	def run_command(self, selection):             		# redefine me lower
 		pass
 	
-	def get_result(self,value):	#get result after change, this is default method done by polling the list
+	def get_result(self,value):	
 		if self.auto_list_update:
 			self.re_populate()
 		self.run_command(value)
-		self.var.set(value)		#TBD ISSUE1 this needs to be uncommented on windows, but i think on linux not dbl check!
-	def re_populate(self):	#http://stackoverflow.com/questions/19794069/tkinter-gui-update-choices-of-an-option-menu-depending-on-a-choice-from-another
-		self.create_entries()	#recreates the self.LIST value
-		#~ menu = self.wid['menu'] #menu
-		menu = self.wid.menu #menu
-		menu.delete(0, 'end')		#delete all						
-		for string in self.LIST:	#recreate list
+		self.var.set(value)		
+	def re_populate(self):	
+		self.create_entries()
+		menu = self.wid.menu 
+		menu.delete(0, 'end')								
+		for string in self.LIST:	
 			menu.add_command(label=string, 
 							command=lambda value=string:
 								 self.get_result(value))
 
+###
+#	SETTING UP TKINTER TEXT WIDGET
+###
 TITLE = "Vroom!"
 DEFAULT_FILE = 'demo_xml_data' 
 class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik Lundh
@@ -133,7 +140,7 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 		title = title + " - " + TITLE
 		self.winfo_toplevel().title(title)
 
-	filename = property(_getfilename, _setfilename)	#Used for automaticly setting title
+	filename = property(_getfilename, _setfilename)	
 
 	def load(self,filename = None):
 		if not filename:
@@ -171,7 +178,6 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			f.close()
 		self.modified = False
 		
-
 root = tk.Tk()
 root.config(background="black")
 
@@ -186,26 +192,39 @@ except (IndexError, IOError):
 	pass
 
 
-#line count
-#tag_manager.line_count()
+###
+#	Style for ttk button styles for button state toggling
+###
+button_styling.install(root, imgdir='img')		
 
+###
+#	SETTING UP KEYBINDS
+###
 editor.bind('<Control_L><b>', lambda e:editor.tag_manager.change_style('bold'))
 editor.bind('<Control_L><i>', lambda e:editor.tag_manager.change_style('italic'))
 editor.bind('<Control_L><u>', lambda e:editor.tag_manager.change_style('solid'))
 editor.bind('<Control_L><o>', lambda e: editor.load())
 editor.bind('<Control_L><s>', lambda e: editor.save())
+editor.bind('<Control_L><p>', lambda e: print('booooo test'))
 
+
+###
+#	SETTING UP BUTTONS AND CALLBACKS
+###
 tk.Button(root, text='load', command = lambda: editor.load()).pack(side ='right')
 tk.Button(root, text='save', command = lambda: editor.save()).pack(side ='right')
-bold = tk.Button(root, text='Bold', command = lambda: editor.tag_manager.change_style('bold'))	#tttt
+bold = ttk.Button(root, text='Bold', command = lambda: editor.tag_manager.change_style('bold'), style='ToggleButton')	#tttt
 bold.pack(side='left')
-italic = tk.Button(root, text='Italic', command = lambda: editor.tag_manager.change_style('italic'))	#tttt
+italic = ttk.Button(root, text='Italic', command = lambda: editor.tag_manager.change_style('italic'), style='ToggleButton')	#tttt
 italic.pack(side='left')
-underline = tk.Button(root, text='Underline', command = lambda: editor.tag_manager.change_style('solid'))	#tttt
+underline = ttk.Button(root, text='Underline', command = lambda: editor.tag_manager.change_style('solid'), style='ToggleButton')	#tttt
 underline.pack(side='left')
-overstrike = tk.Button(root, text='Overstrike', command = lambda: editor.tag_manager.change_style('overstrike'))	#tttt
+overstrike = ttk.Button(root, text='Overstrike', command = lambda: editor.tag_manager.change_style('overstrike'), style='ToggleButton')	#tttt
 overstrike.pack(side='left')
 
+###
+#	FONT SIZE AND FAMILY DROP DOWN LISTS
+###
 class family_menu(MakerOptionMenu):	#Subclassing my gui builder and configuring
 		def start(self):
 			self.initialValue = 'Font'
@@ -226,9 +245,12 @@ class size_menu(MakerOptionMenu):	#Subclassing my gui builder and configuring
 family_menu(root)							#initalize the menus
 size_menu(root)	
 
-#button references
+###
+#	SETTING UP BUTTON REFERENCES FOR AUTOMATIC INDENTING 
+###
 editor.tag_manager.button_references = {'bold':bold,
 										'italic':italic,
 										'underline':underline} 
+
 print(help(editor.tag_manager.change_style))
-root.mainloop()
+root.mainloop()			
