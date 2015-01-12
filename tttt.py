@@ -118,7 +118,7 @@ class MixInText:
 		return attribute
 
 	@staticmethod
-	def button_state_change(but,state):			# in cases wher i want to change values but based on a variable not simple toggle
+	def button_state_change(but,state,style_settings):			# in cases wher i want to change values but based on a variable not simple toggle
 		'''
 		Used for setting TTK buttons as selected or unselected.
 	
@@ -153,20 +153,31 @@ class MixInText:
 		style.theme_use('toggle')
 		'''
 		#~ print('button state toggle called')
-		if state == 'toggle':
-			print('Value of cget : ',but.cget('default'))
-			if str(but.cget('default')) == 'normal': #button state not pressed
-				#~ print('set to active')
-				but.config(default='active')
-			else:
-				but.config(default='normal')
-		elif state:
-			#~ print(1)
-			but.config(default='active')
-		else:
-			#~ print(2)
-			but.config(default='normal')
-	
+		# When the function is called by the user simply moving the cursor in the wiget
+		# We a given all the settings and we loop over only the tuples
+		# When the user has changed the style, we are given the value directly, but the call
+		# is put into a tuple so it matches the filtereing below, e.g (requested_change,)
+		if style_settings:
+			print(repr(but))
+			if hasattr(but, 'set'):		# Tkinter text variables for option menus etc
+				for item in filter(lambda x: type(x) == tuple, style_settings): 
+					print('BUT HAS ATTR SET', but)
+					but.set(item[1])
+			else:						# Ttk button handling
+				if state == 'toggle':
+					print('Value of cget : ',but.cget('default'))
+					if str(but.cget('default')) == 'normal': #button state not pressed
+						#~ print('set to active')
+						but.config(default='active')
+					else:
+						but.config(default='normal')
+				elif state:
+					#~ print(1)
+					but.config(default='active')
+				else:
+					#~ print(2)
+					but.config(default='normal')
+		
 	def default_tag(self, event):	#controlls binding tags on insert,
 		"""
 		text.bind('<Key>',lambda e: default_tag(e))
@@ -239,32 +250,29 @@ class MixInText:
 		# alternate style for ttk buttons
 		
 		cursor = self.text.index('insert')
-
 		#~ print('-----------Checking Button States---- on mouse focus')
 		#~ print('Cursor position :',cursor)
-		print('All tags at cursor',self.text.tag_names(cursor))
+		print('All tags at cursor ',self.text.tag_names(cursor))
 		with ignored(IndexError):
 			current_tag = self.text.tag_names(cursor)[-1]
-			print('All attributes in last tag',self.styles[current_tag])
+			style_settings = self.styles[current_tag]
+			print('All style settings in last tag', self.styles[current_tag])
 		
-		with ignored(KeyError,AttributeError):			# incase no button defined for that styyle option, and if no button references defined
-			for attrib, button in self.button_references.items(): 	# Turning all button states off
-				if button not in ('family','size'): 				# Handle the drop down option menus below
-					#~ print('DEPRESSING: ',attrib)
-					self.button_state_change(self.button_references[attrib],(False))
-				else:	#lists or option menu
-					pass
-		
-		with ignored(IndexError):  		# Turning on Buttons 
-			current_char = self.text.get(cursor)
+			with ignored(KeyError,AttributeError):			# incase no button defined for that style option, and if no button references defined
+				for attrib, button in self.button_references.items(): 	# Turning all button states off
+				#~ print('SADJSKD: ',button)
+					if attrib not in ('family','size','colour'): 				# Handle the drop down option menus below
+						self.button_state_change(self.button_references[attrib], 0, style_settings)
+		#~ with ignored(IndexError):  		
+			current_char = self.text.get(cursor)		# Turning on Buttons 
 			if current_char in (' ','\n'):				# Handles being at end of a word
 				cursor = cursor+'-1c'
 			current_tag = self.text.tag_names(cursor)[-1]	
-			for attribute in self.styles[current_tag]:
-				attribute = self.parse_but_ref(attribute)	
+			for attrib in self.styles[current_tag]:
+				attrib = self.parse_but_ref(attrib)	
 				with ignored(KeyError,AttributeError):	# Incase no button defined for that style option
 					#~ print('attribute being tried :',attribute)
-					self.button_state_change(self.button_references[attribute],(True)) # press it
+					self.button_state_change(self.button_references[attrib], 1, style_settings) # press it
 					#~ print('PRESSING :',attribute)
 		self.overide_state = 0	#back to default behavior
 
@@ -335,11 +343,11 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			#~ print('starting load')
 			#~ print(data)
 			
-			if data.strip():										#Peparing to pretty print for debug
-				xmlt = xml.dom.minidom.parseString(data)		
-				pretty_xml_as_string = xmlt.toprettyxml()
-				with open('xml_on_load.txt','w') as f:			#This file is written for debug purposes
-					f.write(pretty_xml_as_string)
+			#~ if data.strip():										#Peparing to pretty print for debug
+				#~ xmlt = xml.dom.minidom.parseString(data)		
+				#~ pretty_xml_as_string = xmlt.toprettyxml()
+				#~ with open('xml_on_load.txt','w') as f:			#This file is written for debug purposes
+					#~ f.write(pretty_xml_as_string)
 				
 			with ignored(ET.ParseError):					#if parse error i.e no xml tags, just pass
 				tree = ET.fromstring(data)					#create xml tree from str	
@@ -353,7 +361,7 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 					font_style 		= text_properties.get('font-style')	#italic
 					underline_style = text_properties.get('text-underline-style')
 					font_size		= ('size',text_properties.get('font-size'))
-					bg				= ('background',text_properties.get('background-color'))	#TBD TEST  COLOR OPTIONS 
+					bg				= ('background',text_properties.get('background-color')) 
 					fg				= ('foreground',text_properties.get('color'))	#font color
 					font_name		= ('family',text_properties.get('font-name'))	#family e.g arial
 					over			= text_properties.get('text-line-through-type')	#overstrike
@@ -424,10 +432,10 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			xml_data = self.save_style_info()	#saves tags into automatic-styles xml tag and returns data
 			#~ print('xmldata')
 			#~ print(xml_data)
-			xmlt = xml.dom.minidom.parseString(xml_data)	#This code block is for debugging purposes
-			pretty_xml_as_string = xmlt.toprettyxml()
-			with open('xml_on_save.txt','w') as f:
-				f.write(pretty_xml_as_string)
+			#~ xmlt = xml.dom.minidom.parseString(xml_data)	#This code block is for debugging purposes
+			#~ pretty_xml_as_string = xmlt.toprettyxml()
+			#~ with open('xml_on_save.txt','w') as f:
+				#~ f.write(pretty_xml_as_string)
 			return xml_data						#user will decide how to save the str
 		
 		def xml_setup(self):							#create standard xml template
@@ -537,19 +545,19 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 			#~ print(current_tags)
 			if current_tag == 'sel' or requested_change not in self.styles[current_tag]: #ADD request
 				#~ print('add request@ %s , %s' % (self.text.index('sel.first'),self.text.index('sel.last')))
-				button_pressed = True					#press button
+				BUTTON_STATE = True					#press button
 				REMOVE = False	
 				self.text.tag_remove(current_tags[1],'sel.first','sel.last')	#removing old tag
 			else:																		#REMOVE request
 				#~ print('remove request @ %s , %s' % (self.text.index('sel.first'),self.text.index('sel.last')))
-				button_pressed = False					#depress button		
+				BUTTON_STATE = False					#depress button		
 				REMOVE= True			
 				#~ self.text.tag_add('default','sel.first','sel.last')				#adding default tag			
 			style = self.check_styles(requested_change,current_tag,remove=REMOVE)
 			
 			try:					# If a references for a button is not set and the variable isnt configure
 				button = self.button_references[self.parse_but_ref(requested_change)]	# Reference for depressing or pressing button in
-				self.button_state_change(button, button_pressed)
+				self.button_state_change(button, BUTTON_STATE, (requested_change,))
 			except KeyError as err:	# The user of the api now knows he has forgotten to add a button reference
 				pass #make a way to disable errors TBD
 				#~ raise err

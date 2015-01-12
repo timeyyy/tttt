@@ -234,7 +234,7 @@ highlighting.pack(side='left')
 ###
 #	FONT SIZE AND FAMILY DROP DOWN LISTS, AlSO COLOUR CHOOSER
 ###
-class family_menu(MakerOptionMenu):	# Subclassing my gui builder and configuring
+class FamilyMenu(MakerOptionMenu):	# Subclassing my gui builder and configuring
 		def start(self):
 			self.initialValue = 'Font'
 			self.options = ['Arial','Times New Roman','Trebuchet Ms','Comis Sans Ms','Verdana','Georgia']
@@ -242,28 +242,30 @@ class family_menu(MakerOptionMenu):	# Subclassing my gui builder and configuring
 			self.frm_style = {'width':20}
 		def run_command(self,value):
 			editor.tag_manager.change_style(('family',value))	#tttt	
-class size_menu(MakerOptionMenu):	#Subclassing my gui builder and configuring
+class SizeMenu(MakerOptionMenu):	#Subclassing my gui builder and configuring
 		def start(self):
 			self.initialValue = 'Size'
 			self.options = [6,8,10,12,14,16,18]
 			self.conPack = {'expand':0,'side':'left'}
 			self.frm_style = {'width':20}
 		def run_command(self,value):
-			editor.tag_manager.change_style(('size',value))	#tttt	
-
-def change_colour(colour_type):
+			editor.tag_manager.change_style(('size',value))	#tttt				
+def change_colour(colour_type):								# Colour type can be foreground or background
 	colour = askcolor()[1]
 	editor.tag_manager.change_style((colour_type, colour))
 
-family_menu(root)							#initalize the menus
-size_menu(root)	
+family_font_menu = FamilyMenu(root)							#initalize the menus
+size_menu = SizeMenu(root)	
 
 ###
-#	SETTING UP BUTTON REFERENCES FOR AUTOMATIC INDENTING 
+#	SETTING UP BUTTON REFERENCES FOR INDENTING AND VALUE SETTING
 ###
 editor.tag_manager.button_references = {'bold':bold,
 										'italic':italic,
-										'underline':underline} 
+										'underline':underline,
+										'family':family_font_menu.var,
+										#~ 'size':size_menu.var
+										} 
 										#~ 'foreground':pass
 def start():
 	root.mainloop()
