@@ -662,10 +662,10 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 				print('Calling button states')
 				if REMOVE == True:					# As we are removing a style, release the button	
 					print('Unindenting Button')
-					self.button_state_change(self.button_references[attribute], 0)
+					self.button_state_change(self.button_references[attribute], 0, (requested_change,))
 				else:
 					print('Indenting Button a style')
-					self.button_state_change(self.button_references[attribute], 1)
+					self.button_state_change(self.button_references[attribute], 1, (requested_change,))
 	
 		def check_styles(self,requested_change,current,remove=False):
 			#check if an xml tag is already present for the required + new settings
