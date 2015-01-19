@@ -1,0 +1,23 @@
+Metadata-Version: 1.1
+Name: tttt
+Version: 1.0.0
+Summary: Python3 tkinter text plugin - easily save and load multiple font styles
+Home-page: https://github.com/timeyyy/tttt
+Author: timeyyy
+Author-email: tim_eichler@hotmail.com
+License: BSD3
+Description: Super easy to use api, All the commands you will need are below!
+        Automatically indent buttons on selection
+        Bold, Italic, Underline, Overstrike, Fonts, Sizes
+        Behavour of adding and removing tags is modeled on libre office
+        
+Keywords: tkinter text font style bold edit python3
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: BSD3 License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
