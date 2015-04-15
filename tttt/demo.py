@@ -32,7 +32,10 @@ import os
 import sys
 
 from tttt import XmlManager
-from . import button_styling
+try:	
+	from . import button_styling
+except SystemError:
+	import button_styling
 #~ sys.path.append(os.path.join(os.getcwd(),'tttt'))
 
 '''

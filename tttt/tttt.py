@@ -23,11 +23,6 @@
 #~ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 #~ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-# - been playing with defaults gui.. need the button style to indent on click
-	#http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-map.html
-	#also been working with this in gui archetypes in the on_bold func
-
 '''
 ----Overview----
 
@@ -39,9 +34,7 @@ when typing uses the style of previous char
 If a style is changed at the end or start of a word
 When the user types it will have that new setting
 if the user clicks away the setting is read from the new position
-'''
-
-	
+'''	
 '''
 Thoughts
 So when entering data must decide if to overide or not
@@ -54,7 +47,6 @@ To Change button state i need a reference to the button!
 -then i use the references in functions to set values
 
 ''' 
-
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font
@@ -75,6 +67,14 @@ class MixInText:
 	"""
 	General Mix in methods for tkinter Text widget
 	"""
+	@staticmethod
+	def named_partial(name, func, *args):
+		'''After method throws an attribute error because there is no
+		__name__ method found when using functools.partial,this resolves that
+		returns the function'''
+		function = functools.partial(func, *args)
+		function.__name__ = name
+		return function	
 	def word_at_index(self,cursor):
 		'''Returns start and indexs of a word at given cursor position'''
 		text = self.text
@@ -93,7 +93,6 @@ class MixInText:
 					break
 				else:
 					holder = holder +'+1c'
-					
 		holder = cursor	
 		if text.get(holder+'-1c') == '\n':	#left extremity of the word
 			start = cursor
@@ -114,7 +113,6 @@ class MixInText:
 					holder = holder +'-1c'
 		word = text.get(start,end)
 		return word, text.index(start), text.index(end), len(word)
-			
 	def text_from_tag(self, tag):	
 		'''returns the start index, and text for each instance of
 		a tag'''
@@ -122,7 +120,6 @@ class MixInText:
 		for start, end in tag_sections:	#for each section that has the tag,
 			#~ print('start and end TEXT_from_Tag : %s,  %s '% (start,end))
 			yield start, self.text.get(start,end)
-
 	@staticmethod
 	def button_state_toggle(but):
 		if toggle(but):
@@ -131,7 +128,6 @@ class MixInText:
 		else:
 			#~ print(2)
 			but.config(default='normal')		
-	
 	@staticmethod
 	def parse_but_ref(attribute):
 		'''
@@ -142,7 +138,6 @@ class MixInText:
 		elif attribute == 'solid': 
 			attribute ='underline'				# Hacky..
 		return attribute
-
 	@staticmethod
 	def button_state_change(but,state,style_settings):			# in cases wher i want to change values but based on a variable not simple toggle
 		'''
@@ -210,10 +205,6 @@ class MixInText:
 		
 		after being called will reset the self.overide_state variable
 		"""
-		#
-		#
-		#
-		
 		def let_update_add_tag(index):					#fuck, tried using after method before function call but it wasnt working
 			#~ print('LET ME UPDATE')
 			#~ print(' text: ',text.get(index))
@@ -261,20 +252,19 @@ class MixInText:
 				text.after(1,let_text_get)
 				return
 			#~ print(current_tag,' < - Tag to Be added')
-				
-			text.after(1, functools.partial(let_update_add_tag,cursor))
+			text.after(1, self.named_partial('letupdate',let_update_add_tag,cursor))
+			#~ text.after(1, functools.partial(let_update_add_tag,cursor))
 			if event.char != ' ':		# Do no reset on space
 				self.overide_state = 0	# back to default behavior	
-
 		elif event.keysym in ('Left','Down','Right','Up','BackSpace'):	# Button indent checking on arrow key pressed
-			text.after(1, functools.partial(self.check_button_state, event))
+			text.after(1, self.named_partial('arrowbutstate',self.check_button_state,event))
+			#~ text.after(1, functools.partial(self.check_button_state, event))
 			
 	def check_button_state(self, event): # On mouse over and arrow keys or backspace this gets called
 		# Unchecks all buttons
 		# Checks if text before cursour has settings
 		# then sets the buttons to those values for lists or 
 		# alternate style for ttk buttons
-		
 		cursor = self.text.index('insert')
 		#~ print('-----------Checking Button States---- on mouse focus')
 		#~ print('Cursor position :',cursor)
@@ -282,8 +272,7 @@ class MixInText:
 		with ignored(IndexError):
 			current_tag = self.text.tag_names(cursor)[-1]
 			style_settings = self.styles[current_tag]
-			print('All style settings in last tag', self.styles[current_tag])
-		
+			#~ print('All style settings in last tag', self.styles[current_tag])
 			with ignored(KeyError,AttributeError):			# incase no button defined for that style option, and if no button references defined
 				for attrib, button in self.button_references.items(): 	# Turning all button states off
 				#~ print('SADJSKD: ',button)
@@ -308,8 +297,6 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 		
 		the behaviour of adding tags was modelled from libre office
 
-
-	
 		Allows multiple tags for customizing a text widget to be saved
 		and loaded as xml
 		
@@ -340,9 +327,7 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 		see change_style help for more info
 		
 		"""
-		
-		#~ keep_tkinter_class_binding = False		# if i want to make the defaults avaliable one day for some reason
-		
+		#~ keep_tkinter_class_binding = False		# if i want to make the defaults avaliable one day for some reason		
 		option_list = {'bold':{'weight':'bold'},
 						'solid':{'underline':1},
 						'italic':{'slant':'italic'},
@@ -352,7 +337,8 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 		def __init__(self, text):
 			self.text = text										#The text widget	
 			self.text.bind('<Key>',lambda e: self.default_tag(e))	#applies a default tag on insert, so we know which elements have no tags, this will be removed on adding another tag
-			self.text.bind('<Button-1>',lambda e: self.text.after(1, functools.partial(self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
+			self.text.bind('<Button-1>',lambda e: self.text.after(1, self.named_partial('butclick', self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
+			#~ self.text.bind('<Button-1>',lambda e: self.text.after(1, functools.partial(self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
 			self.overide_state = 0		#if the state is active it will overide the default behabvior of style grabbing	
 			#~ self.load_style_tags()		#Load defaults and anyother tags present. TBD, load file controller seems to be propogating the load ? i would like to check that and see if it is a good idea or not to load when the page is first created
 			self.custom_default_style = 0   # TBD implement, see help above
@@ -374,7 +360,6 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 				#~ pretty_xml_as_string = xmlt.toprettyxml()
 				#~ with open('xml_on_load.txt','w') as f:			#This file is written for debug purposes
 					#~ f.write(pretty_xml_as_string)
-				
 			with ignored(ET.ParseError):					#if parse error i.e no xml tags, just pass
 				tree = ET.fromstring(data)					#create xml tree from str	
 				auto_styles = tree.find('automatic-styles')	
@@ -402,11 +387,9 @@ class XmlManager(MixInText):		# Xml handling class for loading and saving, chang
 							if item is not None:
 								filtered.append(item)
 					self.styles[key] = filtered				#add to styles dictionary
-			
 			#~ print('succesfully recreated styles')
 			#~ pprint(self.styles.items(),'succesfully recreated styles')
 			self.load_style_tags()		#loading the styles into text tags 
-			
 			#Inserting text into widget
 			with ignored(UnboundLocalError):	#this with handles case of no body tag i.e first creation
 				body_iter = body.getiterator()	
