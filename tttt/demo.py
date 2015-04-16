@@ -23,7 +23,6 @@
 #~ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 #~ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #~ BSD 3-Clause License (Revised)
-
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.filedialog import asksaveasfilename, askopenfilename
@@ -36,8 +35,6 @@ try:
 	from . import button_styling
 except SystemError:
 	import button_styling
-#~ sys.path.append(os.path.join(os.getcwd(),'tttt'))
-
 '''
 Demo Code for - Tims Tkinter Text Tags - https://github.com/timeyyy/tttt
 
@@ -136,7 +133,6 @@ class MakerOptionMenu(tk.Frame):	#Used for creating Option Menus
 			menu.add_command(label=string, 
 							command=lambda value=string:
 								 self.get_result(value))
-
 ###
 #	SETTING UP TKINTER TEXT WIDGET
 ###
@@ -145,7 +141,6 @@ DEFAULT_FILE = 'demo_xml_data'
 class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik Lundh
 	def __init__(self, master, **options):
 		tk.Text.__init__(self, master, **options)
-		
 		self.config(
 			borderwidth=0,
 			font="{Lucida Sans Typewriter} 14",
@@ -158,7 +153,6 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			undo=True,
 			width=64,
 			)
-		
 		self.tag_manager = XmlManager(self)		#tttt
 		self.filename = None # current document
 		self.load('demo_xml_data')
@@ -240,7 +234,6 @@ editor.bind('<Control_L><o>', lambda e: editor.load())								# This bind syntax
 editor.bind('<Control_L><s>', lambda e: editor.save())
 editor.bind('<Control-Key-r>', lambda e: editor.reload())
 
-
 ###
 #	SETTING UP BUTTONS AND CALLBACKS
 ###
@@ -292,11 +285,14 @@ editor.tag_manager.button_references = {'bold':bold,
 										'italic':italic,
 										'underline':underline,
 										'family':family_font_menu.var,
+										'overstrike':overstrike,
+										'foreground':colour,
 										#~ 'size':size_menu.var
 										} 
 										#~ 'foreground':pass
 def start():
 	root.mainloop()
 if __name__ == '__main__':
+	print(help(XmlManager))
 	print(help(editor.tag_manager.change_style))
 	start()			
