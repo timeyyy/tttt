@@ -30,7 +30,7 @@ from tkinter.colorchooser import askcolor
 import os
 import sys
 
-from tttt import XmlManager
+from tttt import TagManager
 try:	
 	from . import button_styling
 except SystemError:
@@ -143,7 +143,7 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 		tk.Text.__init__(self, master, **options)
 		self.config(
 			borderwidth=0,
-			font="{Lucida Sans Typewriter} 14",
+			font=('Lucida Sans Typewriter', 12),
 			foreground="green",
 			background="black",
 			insertbackground="white", # cursor
@@ -151,9 +151,9 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			selectbackground="#008000",
 			wrap=tk.WORD, # use word wrapping
 			undo=True,
-			width=64,
+			#~ width=80,
 			)
-		self.tag_manager = XmlManager(self)		#tttt
+		self.tag_manager = TagManager(self)		#tttt
 		self.filename = None # current document
 		self.load('demo_xml_data')
 	
@@ -191,6 +191,7 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			f.close()
 		self.modified = False
 		self.filename = filename
+	
 	def save(self):
 		if not self.filename:
 			filename = asksaveasfilename(parent = self.master)
@@ -211,8 +212,8 @@ root = tk.Tk()
 root.config(background="black")
 
 editor = RoomEditor(root)			
-editor.pack(fill=tk.Y, expand=1, pady=10)
-editor.focus_set()	#TBD TAKE FOCUS FROM UNCRUMPLED
+editor.pack(fill='both', expand=1, pady=10)
+editor.focus_set()
 
 try:										# Load Command line args
 	editor.load(sys.argv[1])
@@ -240,6 +241,7 @@ editor.bind('<Control-Key-r>', lambda e: editor.reload())
 tk.Button(root, text='load', command = lambda: editor.load()).pack(side ='right')
 tk.Button(root, text='save', command = lambda: editor.save()).pack(side ='right')
 tk.Button(root, text='reload', command = lambda: editor.reload()).pack(side ='right')
+
 bold = ttk.Button(root, text='Bold', command = lambda: editor.tag_manager.change_style('bold'), style='ToggleButton')	#tttt
 bold.pack(side='left')
 italic = ttk.Button(root, text='Italic', command = lambda: editor.tag_manager.change_style('italic'), style='ToggleButton')	#tttt
@@ -287,12 +289,12 @@ editor.tag_manager.button_references = {'bold':bold,
 										'family':family_font_menu.var,
 										'overstrike':overstrike,
 										'foreground':colour,
-										#~ 'size':size_menu.var
+										'size':size_menu.var
 										} 
 										#~ 'foreground':pass
 def start():
 	root.mainloop()
 if __name__ == '__main__':
-	print(help(XmlManager))
+	print(help(TagManager))
 	print(help(editor.tag_manager.change_style))
 	start()			
