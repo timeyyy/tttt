@@ -224,10 +224,9 @@ class MixInText:
 					text.tag_remove(current_tags[0],index)
 			#~ print('fin defualt tag')
 			print()
-		text = event.widget		
-		#~ print('dtag')																																						
-		if event.char != '' and len(repr(event.char)) >= 3 and event.keysym != 'BackSpace':	# no blank chars from special charachters, no hotkey such as ctrl + (something)
-			#~ print('IN')
+		text = event.widget																																							
+		if event.char != '' and event.state in (0,2) and event.keysym != 'BackSpace':	# no blank chars from special charachters, no hotkey such as ctrl + (something)
+			#~ print('IN ', len(repr(event.char)))
 			#~ pprint(event.__dict__)
 			cursor = text.index('insert')
 			char_before = text.index(cursor + '-1c')	    						
@@ -246,6 +245,7 @@ class MixInText:
 						current_tags = text.tag_names(cursor+'+1c')
 					else:								# get style from last line, which is default behavior
 						current_tags = text.tag_names(cursor+'-1c')
+					print(current_tags,'current tag b4 error')
 					current_tag = current_tags[-1]
 					text.tag_add(current_tag, cursor)
 					if current_tags[0] != current_tag:	# remove old tag
@@ -333,7 +333,10 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 				#~ print(text.bind())
 				#~ text.unbind_class('Text', "<Control-Key-i>")
 			font = self.text.cget('font')[1:].split('}')
-			size = font[1].split(' ')[1]
+			try:
+				size = font[1].split(' ')[1]
+			except IndexError:
+				size = 12
 			default_tag = [('family',font[0]),
 							('size',size),
 							('foreground', self.text.cget('foreground'))]

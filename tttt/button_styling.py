@@ -90,8 +90,5 @@ def install(root, imgdir):
 		}
 	}
 	)
-	
 	style.theme_use('toggle')
-	
-	#~ style.configure('ToggleButton',foreground='red')
 	

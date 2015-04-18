@@ -274,14 +274,17 @@ class SizeMenu(MakerOptionMenu):	#Subclassing my gui builder and configuring
 	def run_command(self,value):
 		editor.tag_manager.change_style(('size',value))	#tttt				
 
+from tkinter import PhotoImage
 class Colour(ttk.Button):
 	def __init__(self, parent, colour_type):
 		ttk.Button.__init__(self, parent)
 		self.style = ttk.Style()
-		self.style.configure('colour.TButton',background='red')
+		#~ self.img = PhotoImage(
+		#~ self.style.configure('colour.TButton',background='red')
 		self.config(command=lambda:self.change_colour(colour_type),
-					width=8,
-					style='colour.TButton')
+					width=6,
+					#~ text='A')
+					style='TButton')
 		self.pack()
 		#~ self.pack(expand=1,fill='both')
 	def change_colour(self, colour_type):								# Colour type can be foreground or background
@@ -308,6 +311,6 @@ editor.tag_manager.button_references = {'bold':bold,
 def start():
 	root.mainloop()
 if __name__ == '__main__':
-	print(help(TagManager))
+	#~ print(help(TagManager))
 	print(help(editor.tag_manager.change_style))
 	start()			
