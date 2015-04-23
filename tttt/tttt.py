@@ -73,7 +73,7 @@ class MixInText:
 		function = functools.partial(func, *args)
 		function.__name__ = name
 		return function	
-	def word_at_index(self,cursor):
+	def word_at_index(self, cursor):
 		'''Returns start and indexs of a word at given cursor position'''
 		text = self.text
 		if text.get(cursor) in (' ','\n'):				#right extremity of the word
@@ -197,21 +197,32 @@ class MixInText:
 			if attrib == item[0]:
 				tk_var.set(item[1])
 				#~ return
-			#~ print('BUT HAS ATTR SET', but, style_settings)
-			#~ but.set(item[1])
 				
-	def default_tag(self, event):	#controlls binding tags on insert,
-		"""
-		text.bind('<Key>',lambda e: default_tag(e))
-		
-		after being called will reset the self.overide_state variable
-		"""
-		def let_update_add_tag(index):					#fuck, tried using after method before function call but it wasnt working
+	def paste_text(self):
+		#~ data = self.text.selection_get(selection='CLIPBOARD')	# only works for text copied after program opened
+		with ignored(tk.TclError):
+			clipboard = self.text.clipboard_get()
+			start = self.text.index('sel.first')
+			end = self.text.index('sel.last')
+			self.text.delete(start, end)
+		start = self.text.index('insert')
+		self.text.insert('insert', clipboard)
+		end = self.text.index('insert')
+		index = start
+		def tag(index, end):
+			print('tagging')
+			while index != end:
+				print(index)
+				self.text.tag_add('default', index)
+				index = self.text.index(index+'+1c')
+		self.text.after(1,tag,index,end)
+		#~ print(clipboard)
+	def let_update_tag(self, current_tags, current_tag, index):		
 			#~ print('LET ME UPDATE')
 			#~ print(' text: ',text.get(index))
 			#~ print('index',index)
 			#~ print('tag to be added',current_tag)
-			text.tag_add(current_tag,index)
+			self.text.tag_add(current_tag,index)
 			#~ print(current_tags,'current tags')
 			#~ print(char_before,'char before')
 			#~ current_tags = self.text.tag_names(index)
@@ -219,13 +230,21 @@ class MixInText:
 			#~ print(self.text.get(cursor+'1c'),'gotten text')
 			#~ print(current_tags,'current tags')
 			#~ print('len current tags,',len(current_tags))
+			#~ print()
 			with ignored(IndexError):	#Fails on 1.0
 				if current_tags[0] != current_tag:			#remove old tag
-					text.tag_remove(current_tags[0],index)
-			#~ print('fin defualt tag')
-			print()
+					self.text.tag_remove(current_tags[0],index)
+			
+	def default_tag(self, event):	#controlls binding tags on insert,
+		"""
+		text.bind('<Key>',lambda e: default_tag(e))
+		
+		after being called will reset the self.overide_state variable
+		"""
+		
 		text = event.widget																																							
-		if event.char != '' and event.state in (0,2) and event.keysym != 'BackSpace':	# no blank chars from special charachters, no hotkey such as ctrl + (something)
+		#~ pprint(event.__dict__)
+		if event.char != '' and event.state in (0,1,2,3) and event.keysym != 'BackSpace':	# no blank chars from special charachters, no hotkey such as ctrl + (something)
 			#~ print('IN ', len(repr(event.char)))
 			#~ pprint(event.__dict__)
 			cursor = text.index('insert')
@@ -253,14 +272,16 @@ class MixInText:
 				text.after(1, let_text_get)
 				return
 			#~ print(current_tag,' < - Tag to Be added')
-			text.after(1, self.named_partial('letupdate',let_update_add_tag,cursor))
+			text.after(1, self.named_partial('letupdate',self.let_update_tag,current_tags,current_tag,cursor))
 			#~ text.after(1, functools.partial(let_update_add_tag,cursor))
 			if event.char != ' ':		# Do no reset on space
 				self.overide_state = 0	# back to default behavior	
-		elif event.keysym in ('Left','Down','Right','Up','BackSpace'):	# Button indent checking on arrow key pressed
+		elif event.keysym in ('Left','Down','Right','Up','BackSpace'):	# Button indent checking on arrow key pressed #tbd this should probably be put somewhere else has nothing to do with default tag
 			text.after(1, self.named_partial('arrowbutstate',self.check_button_state,event))
 			#~ text.after(1, functools.partial(self.check_button_state, event))
-			
+		#~ elif event.state in (4,6) and event.keysym in ('v', 'V') : #ctrl v, also taking into account when capslock being held
+			#~ for i in text.get('self.selection_get(selection='CLIPBOARD')
+			#~ text.after(1, self.named_partial())
 	def check_button_state(self, event): # On mouse over and arrow keys or backspace this gets called
 		cursor = self.text.index('insert')
 		print('-----------Checking Button States-------')
@@ -324,19 +345,23 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 			self.text = text										#The text widget	
 			self.text.bind('<Key>',lambda e: self.default_tag(e))	#applies a default tag on insert, so we know which elements have no tags, this will be removed on adding another tag
 			self.text.bind('<Button-1>',lambda e: self.text.after(1, self.named_partial('butclick', self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
-			#~ self.text.bind('<Button-1>',lambda e: self.text.after(1, functools.partial(self.check_button_state,e)))	#check if text at insertion point has bold italic or underline tags, then set buttons to alternative style		
-			self.overide_state = 0		#if the state is active it will overide the default behabvior of style grabbing	
+			self.text.bind('<Control-Key-v>',lambda event:self.paste_text())
+			self.text.bind('<Control-Key-V>',lambda event:self.paste_text())
+			self.overide_state = 0			#if the state is active it will overide the default behabvior of style grabbing	
 			#~ self.load_style_tags()		#Load defaults and anyother tags present. TBD, load file controller seems to be propogating the load ? i would like to check that and see if it is a good idea or not to load when the page is first created
 			self.custom_default_style = 0   # TBD implement, see help above
 			#~ self.finish()
 			#~ if not self.keep_tkinter_class_binding:
 				#~ print(text.bind())
 				#~ text.unbind_class('Text', "<Control-Key-i>")
-			font = self.text.cget('font')[1:].split('}')
+			font = self.text.cget('font')[0:].split('}')
+			if font[0][0] == '{':						# Font families that have spaces get put in brackets
+				font[0] = font[0][1:]
 			try:
 				size = font[1].split(' ')[1]
 			except IndexError:
 				size = 12
+			print(self.text.cget('font')[0:])
 			default_tag = [('family',font[0]),
 							('size',size),
 							('foreground', self.text.cget('foreground'))]
