@@ -26,38 +26,42 @@ There is a [Demo](https://github.com/timeyyy/tttt/wiki/Demo-Code) avaliable
 Usage
 -----
 
-```
-from tttt import XmlManager
+.. code-block:: python
 
-tag_manager = XmlManager(text)
-```
+	from tttt import XmlManager
+
+	tag_manager = XmlManager(text)
+
 
 bind these to your callback buttons or hotkeys
 
-```
-tag_manager.change_style('bold') 
-tag_manager.change_style('italic')
-tag_manager.change_style('solid') #underline 
-tag_manager.change_style(('family',value)) 
-tag_manager.change_style(('size',value))
-```
+.. code-block:: python
+
+	tag_manager.change_style('bold') 
+	tag_manager.change_style('italic')
+	tag_manager.change_style('solid') #underline 
+	tag_manager.change_style(('family',value)) 
+	tag_manager.change_style(('size',value))
+
 
 Saving and loading
 ^^^^^^^^^^^^^^^^^^
 
-```
-xml_data = tag_manager.save_with_xml()
-tag_manager.load_xml(data)
-```
+.. code-block:: python
+
+	xml_data = tag_manager.save_with_xml()
+	tag_manager.load_xml(data)
+
 
 Configuring Buttons For Indenting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-```
-tag_manager.button_references = {'bold':bold,
+.. code-block:: python
+
+	tag_manager.button_references = {'bold':bold,
 					'italic':italic,
 					'underline':underline}
-```
+
 
 Development / Contributing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
