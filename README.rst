@@ -1,10 +1,8 @@
 
 .. image:: http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg
-	:alt: alternate text
+	:alt: coloring pencils!
 	:align: right
-	:height: 100px
-	:width: 200 px
-	:scale: 50 %
+	:scale: 40 %
 	
 tttt - tims tkinter text tags
 =============================
@@ -22,11 +20,12 @@ Features
 Installation
 ------------
 
-| pip3 install ttttrst u
-| There is a [Demo](https://github.com/timeyyy/tttt/wiki/Demo-Code) avaliable
+pip3 install tttt
 
 Usage
 -----
+
+There is a `Demo <https://github.com/timeyyy/tttt/wiki/Demo-Code>`_ avaliable
 
 .. code-block:: python
 
