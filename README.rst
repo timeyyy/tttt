@@ -2,6 +2,9 @@
 .. image:: http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg
 	:alt: alternate text
 	:align: right
+	:height: 100px
+	:width: 200 px
+	:scale: 50 %
 	
 tttt - tims tkinter text tags
 =============================
