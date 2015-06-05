@@ -1,6 +1,6 @@
 <img src="http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg" alt="pencil icon" width="40%", height="40%" align="right" />
 
-.. image:: http://i101.photobucket.com/albums/m58/timeyyy_da_man/poloring_pencils.jpg
+.. image:: http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg
 	
 tttt - tims tkinter text tags
 =============================
