@@ -22,7 +22,7 @@
 #~ AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILIT, OR TORT (INCLUDING 
 #~ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 #~ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#~ BSD 3-Clause License (Revised)
+#~ BSD 3-Clause License (Revised)s
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.filedialog import asksaveasfilename, askopenfilename
@@ -41,7 +41,7 @@ Demo Code for - Tims Tkinter Text Tags - https://github.com/timeyyy/tttt
 search for '#tttt' to find places where the binding are used throught
 the demo
 
-On program run Automatically opens the file  'demo_xml_data' 
+On program run Automatically opens the file  'demo_xml_data.xml' 
 Saving will overide this file
 
 Key binds are also enabled
@@ -137,7 +137,7 @@ class MakerOptionMenu(tk.Frame):	#Used for creating Option Menus
 #	SETTING UP TKINTER TEXT WIDGET
 ###
 TITLE = "Vroom!"
-DEFAULT_FILE = 'demo_xml_data' 
+DEFAULT_FILE = 'demo_xml_data.xml' 
 class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik Lundh
 	def __init__(self, master, **options):
 		tk.Text.__init__(self, master, **options)
@@ -155,7 +155,7 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			)
 		self.tag_manager = TagManager(self)		#tttt
 		self.filename = None # current document
-		self.load('demo_xml_data')
+		self.load(DEFAULT_FILE)
 	
 	def _getfilename(self):			#Used for automaticly setting title
 		return self._filename
@@ -275,27 +275,44 @@ class SizeMenu(MakerOptionMenu):	#Subclassing my gui builder and configuring
 		editor.tag_manager.change_style(('size',value))	#tttt				
 
 from tkinter import PhotoImage
+#~ class Colour(ttk.Button):
+	#~ def __init__(self, parent, colour_type):
+		#~ ttk.Button.__init__(self, parent)
+		#~ self.style = ttk.Style()
+		#~ ##~ self.img = PhotoImage(
+		#~ ##~ self.style.configure('colour.TButton',background='red')
+		#~ self.config(command=lambda:self.change_colour(colour_type),
+					#~ width=6,
+					#~ ##~ text='A',
+					#~ style='TButton')
+		#~ self.pack()
+		#~ ##~ self.pack(expand=1,fill='both')
+	#~ def change_colour(self, colour_type):								# Colour type can be foreground or background
+		#~ value = askcolor()[1]
+		#~ editor.tag_manager.change_style((colour_type, value))
+		#~ self.style.configure('colour.TButton',background=value)
+
 class Colour(ttk.Button):
-	def __init__(self, parent, colour_type):
+	def __init__(self, parent, colour_type, **kwargs):
 		ttk.Button.__init__(self, parent)
+		self.colour_type = colour_type
 		self.style = ttk.Style()
-		#~ self.img = PhotoImage(
-		#~ self.style.configure('colour.TButton',background='red')
-		self.config(command=lambda:self.change_colour(colour_type),
+		self.config(command=lambda:self.change_colour(),
 					width=6,
-					#~ text='A')
-					style='TButton')
+					style = colour_type +'.TButton', **kwargs)
 		self.pack()
-		#~ self.pack(expand=1,fill='both')
-	def change_colour(self, colour_type):								# Colour type can be foreground or background
+	def change_colour(self):								# Colour type can be foreground or background
 		value = askcolor()[1]
-		editor.tag_manager.change_style((colour_type, value))
-		self.style.configure('colour.TButton',background=value)
-		
+		editor.tag_manager.change_style((self.colour_type, value))
+		ttk.Style().configure(self.colour_type+'.TButton', background=value)
+
+	def set(self, value):
+		ttk.Style().configure(self.colour_type+'.TButton', background=value)
+
 family_font_menu = FamilyMenu(root)							#initalize the menus
 size_menu = SizeMenu(root)	
-foreground = Colour(root, colour_type='foreground')
-#~ background = Colour(root, colour_type='background')
+foreground = Colour(root, colour_type='foreground', text='A')
+background = Colour(root, colour_type='background', text ='H')
 ###
 #	SETTING UP BUTTON REFERENCES FOR INDENTING AND VALUE SETTING
 ###
@@ -305,6 +322,7 @@ editor.tag_manager.button_references = {'bold':bold,
 										'family':family_font_menu.var,
 										'overstrike':overstrike,
 										'foreground':foreground,
+										'background':background,
 										'size':size_menu.var
 										} 
 										#~ 'foreground':pass
@@ -312,5 +330,5 @@ def start():
 	root.mainloop()
 if __name__ == '__main__':
 	#~ print(help(TagManager))
-	print(help(editor.tag_manager.change_style))
+	#~ print(help(editor.tag_manager.change_style))
 	start()			

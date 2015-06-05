@@ -1,4 +1,4 @@
-workon uncrumpled & python -i "tttt.py"
+python "tttt.py"
 
 pause
 del "%0"

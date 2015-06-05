@@ -43,7 +43,6 @@ On Change style have to also change button state
 To Change button state i need a reference to the button!
 -button references get saved when init called, 
 -then i use the references in functions to set values
-
 ''' 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -66,13 +65,14 @@ class MixInText:
 	General Mix in methods for tkinter Text widget
 	"""
 	@staticmethod
-	def named_partial(name, func, *args):
+	def named_partial(name, func, *args):				# TBD see here.. http://stackoverflow.com/questions/11040098/cannot-pass-arguments-from-the-tkinter-widget-after-function#_=_
 		'''After method throws an attribute error because there is no
 		__name__ method found when using functools.partial,this resolves that
 		returns the function'''
 		function = functools.partial(func, *args)
 		function.__name__ = name
 		return function	
+	
 	def word_at_index(self, cursor):
 		'''Returns start and indexs of a word at given cursor position'''
 		text = self.text
@@ -178,7 +178,7 @@ class MixInText:
 		# is put into a tuple so it matches the filtereing below, e.g (requested_change,)	#tbd remove this?		
 				# Ttk button handling
 		if state == 'toggle':
-			print('TOGGLEING Value of cget : ',but.cget('default'))
+			#~ print('TOGGLEING Value of cget : ',but.cget('default'))
 			if str(but.cget('default')) == 'normal': #button state not pressed
 				#~ print('set to active')
 				but.config(default='active')
@@ -192,7 +192,8 @@ class MixInText:
 			but.config(default='normal')
 	
 	@staticmethod
-	def menu_state_change(tk_var, attrib, style_settings):	
+	def menu_state_change(tk_var, attrib, style_settings):				# Tbd how to make the colour changer work with this? str var set up to a style setting?
+		print('Calling menu state chanage for: ', attrib)
 		for item in filter(lambda x: type(x) == tuple, style_settings): 
 			if attrib == item[0]:
 				tk_var.set(item[1])
@@ -210,13 +211,14 @@ class MixInText:
 		end = self.text.index('insert')
 		index = start
 		def tag(index, end):
-			print('tagging')
+			#~ print('tagging')
 			while index != end:
-				print(index)
+				#~ print(index)
 				self.text.tag_add('default', index)
 				index = self.text.index(index+'+1c')
 		self.text.after(1,tag,index,end)
 		#~ print(clipboard)
+	
 	def let_update_tag(self, current_tags, current_tag, index):		
 			#~ print('LET ME UPDATE')
 			#~ print(' text: ',text.get(index))
@@ -238,13 +240,11 @@ class MixInText:
 	def default_tag(self, event):	#controlls binding tags on insert,
 		"""
 		text.bind('<Key>',lambda e: default_tag(e))
-		
 		after being called will reset the self.overide_state variable
 		"""
-		
 		text = event.widget																																							
 		#~ pprint(event.__dict__)
-		if event.char != '' and event.state in (0,1,2,3) and event.keysym != 'BackSpace':	# no blank chars from special charachters, no hotkey such as ctrl + (something)
+		if event.char != '' and event.keysym != 'BackSpace':	# no blank chars from special charachters, no hotkey such as ctrl + (something)
 			#~ print('IN ', len(repr(event.char)))
 			#~ pprint(event.__dict__)
 			cursor = text.index('insert')
@@ -264,7 +264,7 @@ class MixInText:
 						current_tags = text.tag_names(cursor+'+1c')
 					else:								# get style from last line, which is default behavior
 						current_tags = text.tag_names(cursor+'-1c')
-					print(current_tags,'current tag b4 error')
+					#~ print(current_tags,'current tag b4 error')
 					current_tag = current_tags[-1]
 					text.tag_add(current_tag, cursor)
 					if current_tags[0] != current_tag:	# remove old tag
@@ -272,27 +272,34 @@ class MixInText:
 				text.after(1, let_text_get)
 				return
 			#~ print(current_tag,' < - Tag to Be added')
-			text.after(1, self.named_partial('letupdate',self.let_update_tag,current_tags,current_tag,cursor))
-			#~ text.after(1, functools.partial(let_update_add_tag,cursor))
+			text.after(1, self.named_partial('letupdate', self.let_update_tag,current_tags,current_tag,cursor))
+			text.after(1, self.named_partial('randomname', self.check_button_state, event))
 			if event.char != ' ':		# Do no reset on space
 				self.overide_state = 0	# back to default behavior	
 		elif event.keysym in ('Left','Down','Right','Up','BackSpace'):	# Button indent checking on arrow key pressed #tbd this should probably be put somewhere else has nothing to do with default tag
-			text.after(1, self.named_partial('arrowbutstate',self.check_button_state,event))
+			text.after(1, self.named_partial('arrowbutstate',self.check_button_state, event))
 			#~ text.after(1, functools.partial(self.check_button_state, event))
 		#~ elif event.state in (4,6) and event.keysym in ('v', 'V') : #ctrl v, also taking into account when capslock being held
 			#~ for i in text.get('self.selection_get(selection='CLIPBOARD')
 			#~ text.after(1, self.named_partial())
+	
 	def check_button_state(self, event): # On mouse over and arrow keys or backspace this gets called
 		cursor = self.text.index('insert')
 		print('-----------Checking Button States-------')
-		#~ print('Cursor position :',cursor)
+		print('Cursor position :',cursor)
 		with ignored(IndexError):
+			pass
 			print('Cursor info ',self.text.tag_names(cursor),self.styles[self.text.tag_names(cursor)[-1]])
 		try:
+			if self.text.get(cursor) == '\n':
+				cursor = cursor + '-1c'
 			current_tag = self.text.tag_names(cursor)[-1]
 			style_settings = self.styles[current_tag]
 		except(IndexError):
-			style_settings = ''
+			print('Style settings set to none')
+			style_settings = ''	
+			#~ previous_tag = self.text.tag_names(cursor + '-1c')[-1]	
+			#~ style_settings = self.styles[previous_tag]	
 		with ignored(KeyError,AttributeError):			
 			for attrib, button in self.button_references.items(): 		# Turning all button states off
 				if attrib not in ('family','size','colour'): 		
@@ -305,7 +312,7 @@ class MixInText:
 		for attrib in self.styles[current_tag]:							# Turning on Buttons 
 			attrib = self.parse_but_ref(attrib)	
 			with ignored(KeyError,AttributeError):	
-				if attrib not in ('family','size','colour'):
+				if attrib not in ('family','size', 'foreground','background'):
 					self.button_state_change(self.button_references[attrib], 1, style_settings)
 				else:
 					self.menu_state_change(self.button_references[attrib], attrib, style_settings)
@@ -318,11 +325,10 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 		demo.start()
 		
 		The behaviour of adding tags was modelled from libre office
-		Supports all tags of Text widget, see change_style for more info
 		
-		to change the default text type do this:
-		tag_manager.custom_default_style = [
-		'bold','sold','italic',('family',arial),('size',15)]
+		to change the default styles simple use the config method on text
+		widget, Bold, Italic and Underline are not supported for default styles
+		Make sure to initialize your font family and size selection widgets to your default
 		
 		-----Short Example-----
 		tag_manager = TagManager(TextWidget):
@@ -349,7 +355,6 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 			self.text.bind('<Control-Key-V>',lambda event:self.paste_text())
 			self.overide_state = 0			#if the state is active it will overide the default behabvior of style grabbing	
 			#~ self.load_style_tags()		#Load defaults and anyother tags present. TBD, load file controller seems to be propogating the load ? i would like to check that and see if it is a good idea or not to load when the page is first created
-			self.custom_default_style = 0   # TBD implement, see help above
 			#~ self.finish()
 			#~ if not self.keep_tkinter_class_binding:
 				#~ print(text.bind())
@@ -361,12 +366,13 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 				size = font[1].split(' ')[1]
 			except IndexError:
 				size = 12
-			print(self.text.cget('font')[0:])
+			#~ print(self.text.cget('font')[0:])
 			default_tag = [('family',font[0]),
 							('size',size),
 							('foreground', self.text.cget('foreground'))]
 			self.styles = {'default':default_tag}
-			self.text.config(font=(font[0], size))	# cannot have any sort of bold,italic,solid settings
+			self.text.config(font=(font[0], size))		# cannot have any sort of bold,italic,solid for default setting
+		
 		def load_xml(self,data):	#data here is a str of xml
 			'''
 			pass in xml data that has been previously saved 
@@ -398,7 +404,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 					
 					values = [weight,font_style,underline_style,font_size,font_name,bg,fg,over]	#add all items and remove the null values
 					filtered = []	
-					for item in values:	#filter the none values out of the tupled and normal items #TBD CAN YOU MAKE THIS NICER??
+					for item in values:	#filter the none values out of the tupled and normal items
 						try:
 							if item[1] is not None:			#some values are passed in as a tuple and have to be handled differently
 								filtered.append(item)
@@ -425,6 +431,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 				#~ print(self.text.tag_ranges('default'),'def')
 				#~ print(self.text.tag_ranges('p1'),'p1')
 			#~ print('FINISHED LOADING')
+			self.text.after(20, lambda: self.check_button_state(None))	# sets the correct button states 
 		
 		def load_style_tags(self):		# loading the styles into text tags 
 			#~ print('loading the styles into text tags')
@@ -467,7 +474,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 			#~ with open('xml_on_save.txt','w') as f:
 				#~ f.write(pretty_xml_as_string)
 			return xml_data						#user will decide how to save the str
-		
+			
 		def xml_setup(self):							#create standard xml template
 			root = ET.Element("document-content")					
 			auto_styles = ET.SubElement(root, "automatic-styles")
@@ -567,16 +574,16 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 					raise err
 					sys.exit()
 				else:											# If no selected text
-					print('No Selected Text, Change style')
+					#~ print('No Selected Text, Change style')
 					self.change_style_non_select(requested_change)
 					self.text.focus_force()						# Refocuses after clickng on button	
 
 		def change_style_selected(self,requested_change): 		# What to do on selected text
-			print('Change style SELECTED')
+			#~ print('Change style SELECTED')
 			current_tags = self.text.tag_names('sel.first')		# All tags on the first charcher	     
 			with ignored(IndexError):							# Empty if no tags
 				current_tag = current_tags[-1]					# Last added tag	
-			print([current_tag,'  ',requested_change,],'cur tag req change')
+			#~ print([current_tag,'  ',requested_change,],'cur tag req change')
 			#~ print(current_tags)
 			if current_tag == 'sel' or requested_change not in self.styles[current_tag]: #ADD request
 				#~ print('add request@ %s , %s' % (self.text.index('sel.first'),self.text.index('sel.last')))
@@ -592,7 +599,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 				
 				attrib = self.parse_but_ref(requested_change)	# Reference for depressing or pressing button in
 				#~ print('attrib ', attrib)
-				if attrib not in ('family','size','colour'):
+				if attrib not in ('family','size', 'foreground','background'):
 					self.button_state_change(self.button_references[attrib], BUTTON_STATE, (requested_change,))
 				else:
 					self.menu_state_change(self.button_references[attrib], attrib, style)
@@ -617,11 +624,10 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 			w, w_start, w_end, w_len = self.word_at_index(cursor)
 			if cursor in (w_start, w_end) or self.text.get(cursor) in(' ', '\n'):	# Cursor is at start or end, turn overide state on with style	
 				if self.text.get(cursor) in (' ', '\n') or cursor == w_end:
-					#~ print('cursor at end position')
 					cursor = cursor+'-1c'								
 				current_tags = self.text.tag_names(cursor)
 				current_tag = current_tags[-1]
-				print('cur tag :',self.styles[current_tag])
+				#~ print('cur tag :',self.styles[current_tag])
 				if not self.overide_state:
 					if requested_change not in self.styles[current_tag]:	# ADD request to next char
 						REMOVE = False
@@ -643,7 +649,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 				#~ print(cursor,w, w_start, w_end, w_len)
 				tag_at_inital_cur_pos = self.text.tag_names(cursor)[-1]
 				current_tags = self.text.tag_names(cursor)
-				print(current_tags)
+				#~ print(current_tags)
 				if requested_change not in self.styles[tag_at_inital_cur_pos]:	# ADD request to word
 					REMOVE = False
 				else:															# REMOVE request from word
@@ -672,7 +678,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 			#~ print('All tags at cursor',self.text.tag_names(cursor))
 			attribute = self.parse_but_ref(requested_change) # Toggleing the requested change
 			#~ print('Attribute to toggle: ',attribute)
-			with ignored(KeyError,AttributeError):
+			with ignored(KeyError, AttributeError, tk.TclError):
 				#~ print('Calling button states')
 				if REMOVE == True:					# As we are removing a style, release the button	
 					#~ print('Unindenting Button')
@@ -686,8 +692,9 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 		def check_styles(self,requested_change,current_tag,remove=False):
 			#check if a tag is already present for the required + new settings
 			#returns either the key or the list of settings for a new style to be created
-			print('In Check Styles')
-			print(type(requested_change),requested_change)
+			#the old key or list will only be returned if that style doesn't exist elsewhere...
+			#~ print('In Check Styles')
+			#~ print(type(requested_change),requested_change)
 			if remove:	
 				#~ print('removing!')
 				if type(requested_change) in (tuple, list):		# a menu list item such as size or font
@@ -696,14 +703,14 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 					required_style = [item for item in self.styles[current_tag]
 										if item != requested_change]	
 			else:		
-				print('adding!, cur tag = ', current_tag)
+				#~ print('adding!, cur tag = ', current_tag)
 				if current_tag == 'sel':	#sel has to be handled specifically, i.e not saving a list with it in the styles dictionary
-					print('current_tag TAG = SEL')
+					#~ print('current_tag TAG = SEL')
 					required_style = [requested_change]
 				else:
 					#~ print(self.styles[current_tag][:],'current_tag STYLE')
 					if type(requested_change) in (tuple, list):		# a menu list item such as size or font
-						print('tuple or a list was changed')
+						#~ print('tuple or a list was changed')
 						required_style = []
 						for item in self.styles[current_tag]:		# remove the old size
 							if type(item) not in (tuple, list):
@@ -715,20 +722,24 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 					required_style.append(requested_change)		# add the change from current_tag values		
 				
 			#~ print('The required style is: ',required_style)
-		
 			for key,items in self.styles.items(): 	            # find out if our style exists already
 				#~ print (key,'=> ',items)
 				if set(items) == set(required_style):	# unordered equality check (not taking duplicates into account)
-					#~ print(items,required_style ,'match')
-					return key			# style already exists
-			else:		#if no matches
-				#~ print('No match found !')
-				if type(required_style) == list: #this check was put in because of the first 'sel'
-					return required_style
-				else: 
-					return [required_style]
+					print('We have a match! ', self.text.tag_ranges(current_tag))
+					if not self.text.tag_ranges(current_tag):
+						#~ print('current tag still exists elsewhere')
+					#~ else:
+						print('doesnt exist elsewehre')
+						return key			# style already exists
+					break
+			#~ else:		#if no matches
+			#~ print('No match found !')
+			if type(required_style) == list: #this check was put in because of the first 'sel'
+				return required_style
+			else: 
+				return [required_style]
 
-		def create_new_font(self,style,first_index=False,last_index = False):
+		def create_new_font(self,style,first_index=False,last_index=False):
 			#Creates a new font setting for the passed in style
 			#Adds it to our styles dict and applies it to the index
 			new_font = tkinter.font.Font(self.text, self.text.cget("font"))	#Get base font options
@@ -759,6 +770,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 					pass
 			self.styles[new_name] = style										
 			return new_name		# this is only used in like 1 out of 3 calls to this function fyi
+		
 		def make_name(self,style):	#
 			#~ makes a new name for the tk and xml tag,
 			#~ If an entire line is selected, make a p tag,
@@ -766,7 +778,7 @@ class TagManager(MixInText):		# Xml handling class for loading and saving, chang
 
 			if 'full line selected':	#p tag
 				tag = 'p' 
-			else: 						#span tag TBD
+			else: 						#span tag TBD to meet same spec as open office
 				tag = 'T'
 			last = 1
 			versions = [int(item[-1]) for item in self.styles.keys() if item[0] == tag]	#group numbers at end according to tag
