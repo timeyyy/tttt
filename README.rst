@@ -1,4 +1,7 @@
 <img src="http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg" alt="pencil icon" width="40%", height="40%" align="right" />
+.. image:: poloring_pencils.jpg
+	:target: http://i101.photobucket.com/albums/m58/timeyyy_da_man/
+	
 tttt - tims tkinter text tags
 =============================
 
