@@ -1,6 +1,6 @@
 
 .. image:: http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg
-:align right
+	:align right
 	
 tttt - tims tkinter text tags
 =============================
