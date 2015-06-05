@@ -1,16 +1,10 @@
 
 .. image:: http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg
-	:align right
 	
 tttt - tims tkinter text tags
 =============================
 
 Save and load tags for the tkinter text widget using open office format xml
-
-Developed with Python3
-
-
-
 
 Features
 --------
