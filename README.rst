@@ -1,5 +1,7 @@
 
 .. image:: http://i101.photobucket.com/albums/m58/timeyyy_da_man/coloring_pencils.jpg
+	:alt: alternate text
+	:align: right
 	
 tttt - tims tkinter text tags
 =============================
@@ -17,8 +19,8 @@ Features
 Installation
 ------------
 
-The plugin is not yet released as a pip. (needs to be a little bit more stable)
-There is a [Demo](https://github.com/timeyyy/tttt/wiki/Demo-Code) avaliable
+| pip3 install ttttrst u
+| There is a [Demo](https://github.com/timeyyy/tttt/wiki/Demo-Code) avaliable
 
 Usage
 -----
