@@ -50,10 +50,10 @@ Saving and loading
 ^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
-
-	xml_data = tag_manager.save_with_xml()
-	tag_manager.load_xml(data)
-
+	
+	tag_manager.load(data)
+	xml_data = tag_manager.save()
+	
 
 Configuring Buttons For Indenting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
