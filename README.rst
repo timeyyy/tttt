@@ -61,17 +61,11 @@ Configuring Buttons For Indenting
 .. code-block:: python
 
 	tag_manager.button_references = {'bold':bold,
-									'italic':italic,
-									'underline':underline,
-									'family':family_font_menu.var,
-									'overstrike':overstrike,
-									'foreground':foreground,
-									'background':background,
-									'size':size_menu.var
-									} 
-
-
-Development / Contributing
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-pass
-
+					'italic':italic,
+					'underline':underline,
+					'family':family_font_menu.var,
+					'overstrike':overstrike,
+					'foreground':foreground,
+					'background':background,
+					'size':size_menu.var
+					} 
