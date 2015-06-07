@@ -25,7 +25,7 @@ pip3 install tttt
 Usage
 -----
 
-There is a `Demo <https://github.com/timeyyy/tttt/wiki/Demo-Code>`_ avaliable
+There is a `demo picture <https://github.com/timeyyy/tttt/wiki/Demo-Code>`_ avaliable
 
 .. code-block:: python
 
@@ -40,10 +40,11 @@ bind these to your callback buttons or hotkeys
 
 	tag_manager.change_style('bold') 
 	tag_manager.change_style('italic')
-	tag_manager.change_style('solid') #underline 
+	tag_manager.change_style('solid') 			# underline 
 	tag_manager.change_style(('family',value)) 
 	tag_manager.change_style(('size',value))
-
+	tag_manager.change_style(('foreground', value))
+	tag_manager.change_style(('background', value))
 
 Saving and loading
 ^^^^^^^^^^^^^^^^^^
@@ -60,8 +61,14 @@ Configuring Buttons For Indenting
 .. code-block:: python
 
 	tag_manager.button_references = {'bold':bold,
-					'italic':italic,
-					'underline':underline}
+									'italic':italic,
+									'underline':underline,
+									'family':family_font_menu.var,
+									'overstrike':overstrike,
+									'foreground':foreground,
+									'background':background,
+									'size':size_menu.var
+									} 
 
 
 Development / Contributing

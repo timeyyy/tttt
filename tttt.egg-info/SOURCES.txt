@@ -1,3 +1,9 @@
+AUTHORS.rst
+HISTORY.rst
+LICENSE
+MANIFEST.in
+README.rst
+setup.cfg
 setup.py
 tttt/__init__.py
 tttt/button_styling.py
