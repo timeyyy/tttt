@@ -1,4 +1,7 @@
-2015-06-07 19:29:05,584:DEBUG: System is: Windows-7-6.1.7601-SP1
-2015-06-07 19:29:05,584:DEBUG: Python archetecture is: 32bit
-2015-06-07 19:29:05,584:DEBUG: Machine archetecture is: AMD64
-2015-06-07 19:29:05,584:INFO: Current tagS and style ('p1',) [('size', '16'), ('family', 'Lucida Sans Typewriter'), ('foreground', '#00ff00')]
+2015-09-18 15:42:49,766:DEBUG: System is: Linux-3.13.0-62-generic-i686-with-Ubuntu-14.04-trusty
+2015-09-18 15:42:49,771:DEBUG: Python archetecture is: 32bit
+2015-09-18 15:42:49,771:DEBUG: Machine archetecture is: i686
+2015-09-18 15:42:49,850:INFO: Current tags and style ('default',) [('size', '12'), ('family', 'Lucida Sans Typewriter'), ('foreground', 'green')]
+2015-09-18 15:42:51,352:INFO: Current tags and style ('default',) [('size', '12'), ('family', 'Lucida Sans Typewriter'), ('foreground', 'green')]
+2015-09-18 15:42:51,638:INFO: Current tags and style ('default',) [('size', '12'), ('family', 'Lucida Sans Typewriter'), ('foreground', 'green')]
+2015-09-18 15:42:51,773:INFO: Current tags and style ('default',) [('size', '12'), ('family', 'Lucida Sans Typewriter'), ('foreground', 'green')]

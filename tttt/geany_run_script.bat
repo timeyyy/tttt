@@ -1,4 +1,4 @@
-python "tttt.py" bdist_esky
+python demo.py
 
 pause
 del "%0"

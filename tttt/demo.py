@@ -95,6 +95,7 @@ class MakerOptionMenu(tk.Frame):	#Used for creating Option Menus
 			self.pack(**self.conPack)
 		self.create_entries()		#creates self.LIST
 		self.make_widget(self.LIST)		
+	
 	def make_widget(self,options):
 		self.var=tk.StringVar()
 		self.var.set(self.initialValue)
@@ -137,7 +138,8 @@ class MakerOptionMenu(tk.Frame):	#Used for creating Option Menus
 #	SETTING UP TKINTER TEXT WIDGET
 ###
 TITLE = "Vroom!"
-DEFAULT_FILE = 'demo_xml_data.xml' 
+#~ DEFAULT_FILE = 'demo_xml_data.xml' 
+DEFAULT_FILE = 'test.xml' 
 class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik Lundh
 	def __init__(self, master, **options):
 		tk.Text.__init__(self, master, **options)
@@ -148,11 +150,12 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			background="black",
 			insertbackground="white", # cursor
 			selectforeground="green", # selection
-			selectbackground="#008000",
+			selectbackground="turquoise1",
 			wrap=tk.WORD, # use word wrapping
 			undo=True,
 			#~ width=80,
 			)
+		TagManager.remove_default_bindings(self)
 		self.tag_manager = TagManager(self)		#tttt
 		self.filename = None # current document
 		self.load(DEFAULT_FILE)
@@ -171,7 +174,12 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 	def load(self,filename = None):
 		if not filename:
 			filename = askopenfilename(parent = self.master)
-		data = open(filename).read()
+		try:
+			data = open(filename).read()
+		except FileNotFoundError:
+			file = open(filename, 'w')
+			data = open(filename).read()
+			file.close()
 		self.delete(1.0, tk.END)
 		self.tag_manager.load(data)				#tttt - this line replaces the code below
 		#~ self.insert(tk.END, text)
@@ -205,39 +213,48 @@ class RoomEditor(tk.Text):			#http://effbot.org/zone/vroom.htm  credits Fredrik 
 			f.close()
 		self.modified = False
 		
-	def reload(self):		# For testing
+	def reload(self):
 		self.load(self.filename)
-		
+
+	def select_all(self, event):	#tbd move to tttt
+		text = event.widget
+		cursor_row = int(text.index('insert').split('.')[0])
+		end_row = int(text.index('end').split('.')[0])
+		cursor = text.index('insert')
+		if end_row  == cursor_row+1 and text.get(cursor)!='\n':
+			end = 'end'+'-1c'
+		else:
+			end = 'end'
+		text.tag_add('sel', '1.0', end)
+
 root = tk.Tk()
 root.config(background="black")
-
 editor = RoomEditor(root)			
 editor.pack(fill='both', expand=1, pady=10)
 editor.focus_set()
 
-try:										# Load Command line args
-	editor.load(sys.argv[1])
+# Load Command line args
+try:								
+	if '.txt' in sys.argv[1] or '.xml' in sys.argv[1]:
+		editor.load(sys.argv[1])
 except (IndexError, IOError):
 	pass
 
-###
 #	Style for ttk button styles for button state toggling
-###
 button_styling.install(root, imgdir='img')		
 
-###
 #	SETTING UP KEYBINDS
-###
 editor.bind('<Control-Key-b>', lambda e:editor.tag_manager.change_style('bold'))
 editor.bind('<Control-Key-i>', lambda e:editor.tag_manager.change_style('italic'))
 editor.bind('<Control-Key-u>', lambda e:editor.tag_manager.change_style('solid'))
-editor.bind('<Control_L><o>', lambda e: editor.load())								# This bind syntax is different, the user has to release the keys before calling it again
-editor.bind('<Control_L><s>', lambda e: editor.save())
+editor.bind('<Control-Key-o>', lambda e: editor.load())								# This bind syntax is different, the user has to release the keys before calling it again
+editor.bind('<Control-Key-s>', lambda e: editor.save())
 editor.bind('<Control-Key-r>', lambda e: editor.reload())
+editor.bind('<Control-Key-a>', editor.tag_manager.select_all)
+editor.bind('<Control-Key-A>', editor.tag_manager.select_all)
 
-###
+
 #	SETTING UP BUTTONS AND CALLBACKS
-###
 tk.Button(root, text='load', command = lambda: editor.load()).pack(side ='right')
 tk.Button(root, text='save', command = lambda: editor.save()).pack(side ='right')
 tk.Button(root, text='reload', command = lambda: editor.reload()).pack(side ='right')
@@ -254,10 +271,9 @@ overstrike.pack(side='left')
 #~ colour.pack(side='left')
 #~ highlighting = ttk.Button(root, text='Highlight Colour', command=lambda: change_colour('background')) #tttt 
 #~ highlighting.pack(side='left')	
-###
+
 #	FONT SIZE AND FAMILY DROP DOWN LISTS, AlSO COLOUR CHOOSER
-###
-class FamilyMenu(MakerOptionMenu):	# Subclassing my gui builder and configuring
+class FamilyMenu(MakerOptionMenu):
 	def start(self):
 		self.initialValue = 'Font'
 		self.options = ['Arial','Times New Roman','Trebuchet Ms','Comis Sans Ms','Verdana','Georgia']
@@ -265,7 +281,8 @@ class FamilyMenu(MakerOptionMenu):	# Subclassing my gui builder and configuring
 		self.frm_style = {'width':20}
 	def run_command(self,value):
 		editor.tag_manager.change_style(('family',value))	#tttt	
-class SizeMenu(MakerOptionMenu):	#Subclassing my gui builder and configuring
+
+class SizeMenu(MakerOptionMenu):
 	def start(self):
 		self.initialValue = 'Size'
 		self.options = [6,8,10,12,14,16,18]
@@ -309,13 +326,12 @@ class Colour(ttk.Button):
 	def set(self, value):
 		ttk.Style().configure(self.colour_type+'.TButton', background=value)
 
-family_font_menu = FamilyMenu(root)							#initalize the menus
+family_font_menu = FamilyMenu(root)							# initalize the menus
 size_menu = SizeMenu(root)	
 foreground = Colour(root, colour_type='foreground', text='A')
 background = Colour(root, colour_type='background', text ='H')
-###
+
 #	SETTING UP BUTTON REFERENCES FOR INDENTING AND VALUE SETTING
-###
 editor.tag_manager.button_references = {'bold':bold,
 										'italic':italic,
 										'underline':underline,
@@ -328,7 +344,6 @@ editor.tag_manager.button_references = {'bold':bold,
 										#~ 'foreground':pass
 def start():
 	root.mainloop()
+
 if __name__ == '__main__':
-	#~ print(help(TagManager))
-	#~ print(help(editor.tag_manager.change_style))
 	start()			

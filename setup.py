@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages # Always prefer setuptools over distutils
-from codecs import open # To use a consistent encoding
+from codecs import open 					# To use a consistent encoding
 import os
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -9,7 +9,7 @@ def read(*paths):
         return f.read()
 setup(
 	name = 'tttt',
-	version='0.1.1',
+	version='0.1.3',
 	
 	description = 'Python3 tkinter text plugin - easily save and load multiple font styles',
 	long_description = (read('README.rst') + '\n\n' +
@@ -85,3 +85,8 @@ setup(
 			#~ 'console_scripts': [
 				#~ 'sample=sample:main',],},
 )
+
+#https://hynek.me/articles/sharing-your-labor-of-love-pypi-quick-and-dirty/
+# python setup.py sdist bdist_wheel
+# python setup.py sdist upload
+# python setup.py bdist_wheel upload
