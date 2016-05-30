@@ -243,7 +243,6 @@ class MixInText:
                 # Controls adding the style tag on new text insert,
                 # after being called will reset the self.overide_state variable
                 text = event.widget
-                #~ pprint(event.__dict__)
                 # x01 is ctrl a, i need to find a better way of blocking out unwanted hotkeys my current filterint sucks TBD
                 if event.char not in ('', '\x01') and event.keysym not in ('BackSpace','Delete', 'Escape'):
                         cursor = text.index('insert')
@@ -833,9 +832,9 @@ if __name__ == '__main__':
 
         def logger_setup(log_file):
                 logging.basicConfig(filename=log_file,
-                                                                        filemode='w',
-                                                                        level=logging.DEBUG,
-                                                                        format='%(asctime)s:%(levelname)s: %(message)s')
+                                filemode='w',
+                                level=logging.DEBUG,
+                                format='%(asctime)s:%(levelname)s: %(message)s')
                 logging.debug('System is: %s' % platform.platform())
                 logging.debug('Python archetecture is: %s' % platform.architecture()[0])
                 logging.debug('Machine archetecture is: %s' % platform.machine())
