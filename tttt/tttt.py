@@ -64,7 +64,7 @@ from tkquick.gui.tools import toggle, tkinter_breaker
 
 #~ print(help(ET.Element.getiterator))
 #~ root = self.xml_tree.getroot()               #unavalibel when pasrse from str, .. bug in element tree?
-class MixInText:
+class MixInText():
         """
         General Mix in methods for tkinter Text widget
         """
@@ -377,7 +377,7 @@ class MixInText:
                 text.bind('<Control-Key-p>', null)      # Paste
                 # text.bind('<Control-Key-p>', lambda e:print(1))
                 #~ text.unbind('<Control-Key-i>')       # THIS UNBIND METHOD DOESN"T WORK FML
-        
+
         def select_all(self, event):
                 text = event.widget
                 cursor_row = int(text.index('insert').split('.')[0])
